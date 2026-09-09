@@ -4,10 +4,17 @@ import {
   showLocalSystemNotification,
   NOTIFICATION_BROADCAST_EVENT 
 } from '../utils/notifications';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../utils/supabaseClient';
 
 interface DailyNoticeProps {
   onNavigate?: (page: string) => void;
 }
+
+const HEADERS = {
+  'apikey': SUPABASE_ANON_KEY,
+  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+  'Content-Type': 'application/json'
+};
 
 export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
   useEffect(() => {
@@ -22,7 +29,36 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
       }
     });
 
-    // 2. Real-time DOM event listener (fires when admin sends broadcast)
+    // 2. Real-time Supabase Poller for newly broadcasted notifications
+    const checkForNewBroadcasts = async () => {
+      if (typeof window === 'undefined' || !('Notification' in window) || Notification.permission !== 'granted') return;
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/sent_notifications?select=*&order=sent_at.desc&limit=1`, {
+          headers: HEADERS
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          if (Array.isArray(rows) && rows.length > 0) {
+            const latest = rows[0];
+            const lastDeliveredId = localStorage.getItem('chabad_last_delivered_broadcast_id');
+            const sentTime = latest.sent_at ? new Date(latest.sent_at).getTime() : 0;
+            
+            // If sent in the last 15 minutes and not yet delivered to this device
+            if (lastDeliveredId !== latest.id && (Date.now() - sentTime < 15 * 60 * 1000)) {
+              localStorage.setItem('chabad_last_delivered_broadcast_id', latest.id);
+              showLocalSystemNotification(latest.title, latest.body, latest.url || '/#home');
+            }
+          }
+        }
+      } catch (e) {
+        // continue
+      }
+    };
+
+    checkForNewBroadcasts();
+    const pollInterval = setInterval(checkForNewBroadcasts, 8000); // Check every 8 seconds
+
+    // 3. Real-time DOM event listener (fires when admin sends broadcast in same window)
     const handleCustomBroadcast = (event: any) => {
       if (event.detail && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
         showLocalSystemNotification(event.detail.title, event.detail.body, event.detail.url);
@@ -30,7 +66,7 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
     };
     window.addEventListener(NOTIFICATION_BROADCAST_EVENT, handleCustomBroadcast);
 
-    // 3. Real-time BroadcastChannel listener
+    // 4. Real-time BroadcastChannel listener (across open browser tabs)
     let channel: BroadcastChannel | null = null;
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       try {
@@ -48,6 +84,7 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
     }
 
     return () => {
+      clearInterval(pollInterval);
       window.removeEventListener(NOTIFICATION_BROADCAST_EVENT, handleCustomBroadcast);
       if (channel) {
         channel.close();
