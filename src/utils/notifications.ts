@@ -283,7 +283,10 @@ export async function showLocalSystemNotification(title: string, body: string, u
       try {
         let reg = await navigator.serviceWorker.getRegistration();
         if (!reg) {
-          reg = await navigator.serviceWorker.ready;
+          reg = await navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+        }
+        if (!reg) {
+          reg = await navigator.serviceWorker.ready.catch(() => undefined);
         }
         if (reg && 'showNotification' in reg) {
           await reg.showNotification(title, {
@@ -409,34 +412,122 @@ export interface ActiveDailyNotification {
   timestamp: number;
 }
 
+/**
+ * Generate daily scheduled notification templates (Morning, Afternoon, Before Candle Lighting)
+ */
+export function getDailyTimeBasedNotificationTemplate(): { 
+  title: string; 
+  body: string; 
+  url: string; 
+  period: 'morning' | 'afternoon' | 'candles';
+  slotKey: string;
+} {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 Sunday, 5 Friday, 6 Saturday
+  const hour = now.getHours();
+  const dateIso = now.toISOString().slice(0, 10);
+  const info = getCuritibaShabbatTimes();
+  const candleTime = info.candleLighting || '17:49';
+  const parasha = info.parashaName ? ` (${info.parashaName})` : '';
+
+  // 1. Before Candle Lighting (Friday after 11:00 or Erev Chag)
+  if (dayOfWeek === 5 && hour >= 11 && hour <= 19) {
+    return {
+      period: 'candles',
+      slotKey: `candles_${dateIso}`,
+      title: '🕯️ Alerta de Shabat • Beit Chabad Curitiba',
+      body: `Acendimento das velas hoje às ${candleTime}${parasha}. Shabat Shalom a toda a comunidade!`,
+      url: '/#home'
+    };
+  }
+
+  // 2. Morning Notification (06:00 - 11:59)
+  if (hour < 12) {
+    return {
+      period: 'morning',
+      slotKey: `morning_${dateIso}`,
+      title: '☀️ Bom Dia • Beit Chabad Curitiba',
+      body: 'Desejamos um dia iluminado com boas ações, estudo de Torá e bênçãos para você e sua família!',
+      url: '/#home'
+    };
+  }
+
+  // 3. Afternoon Notification (12:00 - 18:00)
+  if (hour >= 12 && hour < 18) {
+    return {
+      period: 'afternoon',
+      slotKey: `afternoon_${dateIso}`,
+      title: '📖 Boa Tarde • Beit Chabad Curitiba',
+      body: 'Confira as novidades, cursos, aulas e eventos comunitários de hoje no Beit Chabad.',
+      url: '/#home'
+    };
+  }
+
+  // Evening / Night fallback
+  return {
+    period: 'afternoon',
+    slotKey: `night_${dateIso}`,
+    title: '🌙 Beit Chabad Curitiba',
+    body: '45 anos fortalecendo e iluminando o judaísmo em Curitiba e no Paraná com amor e dedicação.',
+    url: '/#home'
+  };
+}
+
+/**
+ * Generate weekly Shabbat Alert dynamic template
+ */
+export function generateShabbatNotificationTemplate(): { title: string; body: string; url: string } {
+  const template = getDailyTimeBasedNotificationTemplate();
+  return {
+    title: template.title,
+    body: template.body,
+    url: template.url
+  };
+}
+
 const ACTIVE_DAILY_NOTICE_KEY = 'chabad_active_daily_notification_v1';
 
 /**
  * Get active daily notification for users opening the website/app today
+ * Priority: 1. Remote Admin Broadcast (if sent within last 24h) -> 2. Scheduled Time-Based Notice (Morning/Afternoon/Candles)
  */
 export async function getActiveDailyNotification(): Promise<ActiveDailyNotification | null> {
-  // 1. Try local active notice cache
+  // 1. Check Supabase for the latest admin broadcast
   try {
-    const raw = localStorage.getItem(ACTIVE_DAILY_NOTICE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // Valid for 24 hours
-      if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
-        return parsed;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/sent_notifications?select=*&order=sent_at.desc&limit=1`, {
+      headers: HEADERS
+    });
+    if (res.ok) {
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length > 0) {
+        const latest = rows[0];
+        const sentTime = latest.sent_at ? new Date(latest.sent_at).getTime() : Date.now();
+        // If sent within the last 24 hours
+        if (Date.now() - sentTime < 24 * 60 * 60 * 1000) {
+          const remoteNotice: ActiveDailyNotification = {
+            id: latest.id,
+            title: latest.title,
+            body: latest.body,
+            url: latest.url || '/#home',
+            timestamp: sentTime
+          };
+          localStorage.setItem(ACTIVE_DAILY_NOTICE_KEY, JSON.stringify(remoteNotice));
+          return remoteNotice;
+        }
       }
     }
-  } catch (e) {
-    // continue
+  } catch (err) {
+    console.warn('[PushNotification] Error fetching latest notice from Supabase:', err);
   }
 
-  // 2. Fallback: Automatically generate today's live Shabbat & Community Notice
+  // 2. Automatic Scheduled Daily Notification (Morning / Afternoon / Before Candle Lighting)
   try {
-    const shabbat = generateShabbatNotificationTemplate();
+    const schedule = getDailyTimeBasedNotificationTemplate();
     const defaultNotice: ActiveDailyNotification = {
-      id: 'daily_shabbat_' + new Date().toISOString().slice(0, 10),
-      title: shabbat.title,
-      body: shabbat.body,
-      url: shabbat.url,
+      id: `scheduled_${schedule.slotKey}`,
+      title: schedule.title,
+      body: schedule.body,
+      url: schedule.url,
       timestamp: Date.now()
     };
     return defaultNotice;
@@ -472,28 +563,5 @@ export function setActiveDailyNotification(notice: ActiveDailyNotification): voi
     } catch (e) {
       // continue
     }
-  }
-}
-
-/**
- * Generate weekly Shabbat Alert dynamic template
- */
-export function generateShabbatNotificationTemplate(): { title: string; body: string; url: string } {
-  try {
-    const info = getCuritibaShabbatTimes();
-    const candleTime = info.candleLighting || '17:49';
-    const parasha = info.parashaName ? ` (${info.parashaName})` : '';
-    
-    return {
-      title: '🕯️ Shabat Shalom!',
-      body: `Acendimento das velas hoje em Curitiba às ${candleTime}${parasha}. Shabat Shalom a toda a comunidade!`,
-      url: '/#home'
-    };
-  } catch {
-    return {
-      title: '🕯️ Shabat Shalom!',
-      body: 'Acendimento das velas hoje em Curitiba. Desejamos um Shabat de muita paz e bênçãos a todos!',
-      url: '/#home'
-    };
   }
 }
