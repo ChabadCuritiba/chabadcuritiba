@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Calendar, Clock, Heart, Phone, MapPin, 
   BookOpen, Sparkles, ChevronDown, Award, Users, 
-  UtensilsCrossed, ShieldCheck, Home, Flame, Search
+  UtensilsCrossed, ShieldCheck, Home, Flame, Search, Bell
 } from 'lucide-react';
 import { getCuritibaShabbatTimes, fetchLiveCuritibaShabbatTimes } from '../utils/shabbatTimes';
+import { 
+  requestNotificationPermission, 
+  showLocalSystemNotification, 
+  getDailyTimeBasedNotificationTemplate 
+} from '../utils/notifications';
 
 interface NavbarProps {
   currentPage: string;
@@ -37,6 +42,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleNotificationClick = async () => {
+    try {
+      const res = await requestNotificationPermission();
+      const template = getDailyTimeBasedNotificationTemplate();
+      await showLocalSystemNotification(
+        template.title,
+        template.body,
+        template.url
+      );
+    } catch (e) {
+      console.warn('Error triggering notification:', e);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
       {/* Top Banner - Curitiba Shabbat Times & Quick Contacts */}
@@ -48,70 +67,77 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
               <Flame className="w-3.5 h-3.5 mr-1 text-chabad-gold animate-pulse" />
               Shabat em Curitiba:
             </span>
-            <span>Velas: <strong className="text-white">{shabbatTimes.candleLighting}</strong></span>
-            <span className="hidden sm:inline text-slate-400">|</span>
-            <span className="hidden sm:inline">Havdalá: <strong className="text-white">{shabbatTimes.havdalah}</strong></span>
-            <span className="hidden md:inline text-slate-400">|</span>
-            <span className="hidden md:inline text-chabad-goldLight/90">Parashat {shabbatTimes.parashaName}</span>
+            <span className="hidden sm:inline text-slate-300">
+              Velas: <strong className="text-white font-bold">{shabbatTimes.candleLighting}</strong>
+            </span>
+            <span className="hidden md:inline text-slate-300">
+              • Havdalá: <strong className="text-white font-bold">{shabbatTimes.havdalah}</strong>
+            </span>
+            <span className="hidden lg:inline text-chabad-gold font-medium">
+              ({shabbatTimes.parashaName})
+            </span>
           </div>
 
-          {/* Quick Contact & Jubileu Indicator */}
-          <div className="flex items-center space-x-4">
+          {/* Direct Contacts & Actions */}
+          <div className="flex items-center space-x-4 text-xs">
             <a 
-              href="tel:+554198977249" 
+              href="tel:+554133432720" 
               className="flex items-center text-slate-300 hover:text-white transition-colors"
             >
               <Phone className="w-3 h-3 mr-1 text-chabad-gold" />
-              <span className="hidden lg:inline">(41) 9897-7249</span>
-              <span className="lg:hidden">Ligar</span>
+              <span className="hidden sm:inline">(41) 3343-2720</span>
+              <span className="sm:hidden">Ligar</span>
             </a>
             <a 
-              href="https://wa.me/554198977249?text=Olá!%20Gostaria%20de%20mais%20informações%20sobre%20o%20Beit%20Chabad%20Curitiba." 
+              href="https://wa.me/554198977249?text=Olá, gostaria de informações sobre o Beit Chabad Curitiba" 
               target="_blank" 
               rel="noreferrer"
-              className="bg-emerald-700/80 hover:bg-emerald-600 text-white px-2 py-0.5 rounded text-xs flex items-center font-medium transition-colors"
+              className="flex items-center text-emerald-400 hover:text-emerald-300 transition-colors font-medium bg-emerald-950/60 px-2 py-0.5 rounded"
             >
-              WhatsApp
+              <span>WhatsApp</span>
             </a>
-            <span className="bg-chabad-gold/20 text-chabad-gold font-medium px-2 py-0.5 rounded border border-chabad-gold/40 text-[11px] hidden sm:inline-block">
-              ✨ 45 Anos no Paraná
-            </span>
           </div>
         </div>
       </div>
 
       {/* Main Navigation Bar */}
-      <div className={`transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-luxury py-2.5' : 'bg-white py-3.5 shadow-sm'}`}>
+      <div className={`bg-white/95 backdrop-blur-md transition-all duration-300 ${
+        scrolled ? 'shadow-luxury py-2 border-b border-slate-200' : 'py-3 border-b border-slate-100'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             
-            {/* Brand Logo with 45 Years Emblem */}
-            <button 
+            {/* Logo */}
+            <div 
               onClick={() => handleNavClick('home')}
-              className="flex items-center space-x-3 text-left group focus:outline-none"
+              className="flex items-center space-x-3 cursor-pointer group"
             >
-              <img 
-                src="/assets/logo.png" 
-                alt="Chabad do Paraná - 45 Anos" 
-                className="h-12 sm:h-14 md:h-16 w-auto object-contain transition-transform group-hover:scale-102"
-              />
-            </button>
+              <div className="relative">
+                <img 
+                  src="/assets/logo.png" 
+                  alt="Beit Chabad do Paraná" 
+                  className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xs" 
+                />
+              </div>
+            </div>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop Navigation Menu */}
             <nav className="hidden xl:flex items-center space-x-1 lg:space-x-2">
               <button 
                 onClick={() => handleNavClick('home')}
                 className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  currentPage === 'home' ? 'text-chabad bg-chabad-light/60' : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
+                  currentPage === 'home' 
+                    ? 'text-chabad bg-chabad-light/60 font-bold' 
+                    : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
                 }`}
               >
                 Início
               </button>
 
-              {/* Chabad Dropdown */}
+              {/* Institucional Dropdown */}
               <div 
                 className="relative group"
-                onMouseEnter={() => setActiveDropdown('chabad')}
+                onMouseEnter={() => setActiveDropdown('institucional')}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <button 
@@ -121,11 +147,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                       : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
                   }`}
                 >
-                  <span>Chabad</span>
+                  <span>Institucional</span>
                   <ChevronDown className="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform" />
                 </button>
 
-                {activeDropdown === 'chabad' && (
+                {activeDropdown === 'institucional' && (
                   <div className="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-100 py-2 animate-in fade-in slide-in-from-top-2 duration-150">
                     <button 
                       onClick={() => handleNavClick('quem-somos')}
@@ -184,7 +210,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                       : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
                   }`}
                 >
-                  <span>Serviços & Vida Judaica</span>
+                  <span>Serviços & Comunidade</span>
                   <ChevronDown className="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform" />
                 </button>
 
@@ -194,10 +220,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                       onClick={() => handleNavClick('sinagoga')}
                       className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
                     >
-                      <Home className="w-4 h-4 mr-2.5 text-chabad" />
+                      <MapPin className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">Sinagoga & Grandes Festas</div>
-                        <div className="text-xs text-slate-500">Tefilot diárias, Shabat e Pessach</div>
+                        <div className="font-medium">Sinagoga & Tefilot</div>
+                        <div className="text-xs text-slate-500">Minian diário, Shabat e Chaguim</div>
                       </div>
                     </button>
                     <button 
@@ -206,18 +232,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                     >
                       <Sparkles className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">Mikvê</div>
-                        <div className="text-xs text-slate-500">Pureza familiar & Agendamentos</div>
+                        <div className="font-medium">Mikvê Mei Menachem</div>
+                        <div className="text-xs text-slate-500">Pureza familiar e agendamentos</div>
                       </div>
                     </button>
                     <button 
                       onClick={() => handleNavClick('ganenu')}
                       className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
                     >
-                      <Users className="w-4 h-4 mr-2.5 text-chabad" />
+                      <Award className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">Ganênu</div>
-                        <div className="text-xs text-slate-500">Educação infantil & Valores</div>
+                        <div className="font-medium">Ganênu Infantil</div>
+                        <div className="text-xs text-slate-500">Educação e vivência para crianças</div>
                       </div>
                     </button>
                     <button 
@@ -226,8 +252,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                     >
                       <UtensilsCrossed className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">KiTov - Alimentos Casher</div>
-                        <div className="text-xs text-slate-500">Guia e culinária casher em Curitiba</div>
+                        <div className="font-medium">Ki-Tov Gastronomia Casher</div>
+                        <div className="text-xs text-slate-500">Alimentos e rotulagem supervisionada</div>
                       </div>
                     </button>
                     <button 
@@ -237,12 +263,24 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                       <ShieldCheck className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
                         <div className="font-medium">Mezuzot & Tefilin</div>
-                        <div className="text-xs text-slate-500">Verificação e aquisição</div>
+                        <div className="text-xs text-slate-500">Verificação sofer e colocação</div>
                       </div>
                     </button>
                   </div>
                 )}
               </div>
+
+              {/* Eventos Link */}
+              <button 
+                onClick={() => handleNavClick('eventos')}
+                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  currentPage === 'eventos' || currentPage === 'rsvp'
+                    ? 'text-chabad bg-chabad-light/60 font-bold' 
+                    : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
+                }`}
+              >
+                Eventos & RSVP
+              </button>
 
               {/* Educação & Juventude */}
               <div 
@@ -297,7 +335,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                 )}
               </div>
 
-
               {/* Informações & Mídia */}
               <div 
                 className="relative group"
@@ -319,42 +356,37 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                   <div className="absolute top-full right-0 w-64 bg-white rounded-xl shadow-xl border border-slate-100 py-2 animate-in fade-in slide-in-from-top-2 duration-150">
                     <button 
                       onClick={() => handleNavClick('yahrtzeit')}
-                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
                     >
                       <Calendar className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">O Yahrtzeit</div>
-                        <div className="text-xs text-slate-500">Calculadora e Kadish</div>
+                        <div className="font-medium">Calculadora de Yahrtzeit</div>
+                        <div className="text-xs text-slate-500">Datas hebraicas e Kadish</div>
                       </div>
                     </button>
                     <button 
                       onClick={() => handleNavClick('curitiba-info')}
-                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
                     >
                       <MapPin className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">Guia de Curitiba</div>
-                        <div className="text-xs text-slate-500">Para visitantes e turistas</div>
+                        <div className="font-medium">Guia Judaico Curitiba</div>
+                        <div className="text-xs text-slate-500">Turistas, Shabat e hotéis</div>
                       </div>
                     </button>
                     <button 
                       onClick={() => handleNavClick('fotos-revista')}
-                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center justify-between"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
                     >
-                      <div className="flex items-center">
-                        <BookOpen className="w-4 h-4 mr-2.5 text-chabad" />
-                        <div>
-                          <div className="font-medium">Fotos & Revista Chabad</div>
-                          <div className="text-xs text-slate-500">Galeria e edições digitais</div>
-                        </div>
+                      <Sparkles className="w-4 h-4 mr-2.5 text-chabad" />
+                      <div>
+                        <div className="font-medium">Fotos & Revista Beit Chabad</div>
+                        <div className="text-xs text-slate-500">Galeria e edições digitais</div>
                       </div>
-                      <span className="text-[10px] font-bold bg-chabad-gold/20 text-chabad-dark border border-chabad-gold/40 px-1.5 py-0.5 rounded-full ml-2">
-                        Em breve
-                      </span>
                     </button>
                     <button 
                       onClick={() => handleNavClick('fale-conosco')}
-                      className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-chabad-light/50 hover:text-chabad flex items-center"
                     >
                       <Phone className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
@@ -370,6 +402,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
             {/* Right CTA - eChabad Doação Button */}
             <div className="hidden lg:flex items-center space-x-3">
               <button 
+                onClick={handleNotificationClick}
+                className="p-2 rounded-xl text-slate-600 hover:text-chabad hover:bg-slate-100 transition-colors"
+                title="Ativar e Testar Notificações"
+              >
+                <Bell className="w-5 h-5 text-amber-600" />
+              </button>
+
+              <button 
                 onClick={onOpenDonate}
                 className="bg-chabad hover:bg-chabad-pine text-white px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center space-x-2 text-sm group"
               >
@@ -380,6 +420,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
 
             {/* Mobile Menu Toggle Button */}
             <div className="flex xl:hidden items-center space-x-2">
+              <button 
+                onClick={handleNotificationClick}
+                className="p-2 text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition-colors"
+                title="Ativar Notificações"
+              >
+                <Bell className="w-4 h-4" />
+              </button>
+
               <button 
                 onClick={onOpenDonate}
                 className="bg-chabad text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
