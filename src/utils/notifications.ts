@@ -371,9 +371,6 @@ export async function broadcastPushNotification(params: {
     return { success: false, count: 0, error: 'Título e mensagem são obrigatórios.' };
   }
 
-  const subscribers = await fetchPushSubscribers();
-  const recipientCount = Math.max(subscribers.length, 1);
-
   const broadcastUniqueId = 'broadcast_' + Date.now();
   const notificationRecord: SentNotification = {
     id: broadcastUniqueId,
@@ -382,51 +379,32 @@ export async function broadcastPushNotification(params: {
     url,
     sentAt: new Date().toLocaleString('pt-BR'),
     sentBy,
-    recipientCount,
+    recipientCount: 1,
     status: 'Entregue'
   };
 
-  // 1. Update local cache
+  // 1. Update local cache immediately
   try {
-    const current = await fetchSentNotifications();
+    const raw = localStorage.getItem(LOCAL_SENT_NOTIFICATIONS_KEY);
+    const current: SentNotification[] = raw ? JSON.parse(raw) : [];
     const updated = [notificationRecord, ...current];
     localStorage.setItem(LOCAL_SENT_NOTIFICATIONS_KEY, JSON.stringify(updated));
   } catch (e) {
     console.warn(e);
   }
 
-  // 2. Persist in Supabase sent_notifications table (if table exists)
+  // 2. Sync to Supabase events table as unique broadcast row with 3s timeout
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/sent_notifications`, {
-      method: 'POST',
-      headers: {
-        ...HEADERS,
-        'Prefer': 'resolution=merge-duplicates'
-      },
-      body: JSON.stringify({
-        id: notificationRecord.id,
-        title: notificationRecord.title,
-        body: notificationRecord.body,
-        url: notificationRecord.url,
-        sent_at: new Date().toISOString(),
-        sent_at_formatted: notificationRecord.sentAt,
-        sent_by: notificationRecord.sentBy,
-        recipient_count: recipientCount,
-        status: notificationRecord.status
-      })
-    });
-  } catch (err) {
-    console.warn('[PushNotification] Error saving notification record to Supabase:', err);
-  }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3000);
 
-  // 3. Sync to Supabase events table as unique broadcast row for instant cross-device delivery
-  try {
     await fetch(`${SUPABASE_URL}/rest/v1/events`, {
       method: 'POST',
       headers: {
         ...HEADERS,
         'Prefer': 'return=representation'
       },
+      signal: controller.signal,
       body: JSON.stringify({
         id: broadcastUniqueId,
         title: notificationRecord.title,
@@ -445,18 +423,32 @@ export async function broadcastPushNotification(params: {
         ]
       })
     });
+    clearTimeout(timer);
   } catch (err) {
     console.warn('[PushNotification] Error syncing broadcast to events table:', err);
   }
 
-  // 4. Dispatch to local service worker if running on device
-  try {
-    await showLocalSystemNotification(title, body, url);
-  } catch (e) {
-    // Non-fatal
-  }
+  // 3. Persist in background to sent_notifications table
+  fetch(`${SUPABASE_URL}/rest/v1/sent_notifications`, {
+    method: 'POST',
+    headers: {
+      ...HEADERS,
+      'Prefer': 'resolution=merge-duplicates'
+    },
+    body: JSON.stringify({
+      id: notificationRecord.id,
+      title: notificationRecord.title,
+      body: notificationRecord.body,
+      url: notificationRecord.url,
+      sent_at: new Date().toISOString(),
+      sent_at_formatted: notificationRecord.sentAt,
+      sent_by: notificationRecord.sentBy,
+      recipient_count: 1,
+      status: notificationRecord.status
+    })
+  }).catch(() => {});
 
-  // 4. Update active daily announcement so every user opening the site sees it
+  // 4. Update active daily announcement & BroadcastChannel
   setActiveDailyNotification({
     id: notificationRecord.id,
     title,
@@ -465,7 +457,10 @@ export async function broadcastPushNotification(params: {
     timestamp: Date.now()
   });
 
-  return { success: true, count: recipientCount };
+  // 5. Fire local notification non-blockingly
+  showLocalSystemNotification(title, body, url).catch(() => {});
+
+  return { success: true, count: 1 };
 }
 
 export interface ActiveDailyNotification {
