@@ -55,14 +55,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
       return;
     }
 
-    if (Notification.permission === 'denied') {
-      alert('⚠️ Notificações bloqueadas no Android.\n\nPara ativar:\n1. Acesse Configurações do Celular > Aplicativos > Chabad PR\n2. Ative "Permitir Notificações".');
-      return;
-    }
-
     try {
-      const res = await requestNotificationPermission();
-      if (res.success || Notification.permission === 'granted') {
+      let perm = Notification.permission;
+      if (perm !== 'granted') {
+        perm = await Notification.requestPermission();
+      }
+
+      if (perm === 'granted') {
         const template = getDailyTimeBasedNotificationTemplate();
         const sent = await showLocalSystemNotification(
           template.title,
@@ -71,9 +70,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
         );
         if (sent) {
           alert('🔔 Notificação enviada! Olhe na barra superior de notificações do seu celular.');
+        } else {
+          alert('Notificação autorizada com sucesso!');
         }
       } else {
-        alert('Permissão de notificação: ' + (res.error || 'Negada'));
+        alert('⚠️ O Chrome/Android bloqueou as notificações do site.\n\nPara desbloquear com 1 clique:\n1. No seu celular, vá em Configurações > Aplicativos > Chabad PR > Armazenamento > Limpar Armazenamento (ou Limpar Dados)\n2. Ao reabrir o app, toque no Sino 🔔 e selecione "Permitir"!');
       }
     } catch (e: any) {
       console.warn('Error triggering notification:', e);
