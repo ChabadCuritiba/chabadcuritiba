@@ -1,14 +1,15 @@
 import { 
   Heart, Phone, MapPin, Mail, Flame, 
-  ArrowUp, ShieldCheck, Clock, ExternalLink 
+  ArrowUp, ShieldCheck, Clock, ExternalLink, Coins 
 } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
   onOpenDonate: () => void;
+  onOpenPushka?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate, onOpenPushka }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -116,6 +117,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate }) => {
                 <button onClick={() => handleNav('fotos-revista')} className="hover:text-chabad-gold transition-colors flex items-center gap-1.5">
                   <span>Revista & Fotos</span>
                   <span className="text-[10px] text-chabad-gold font-bold bg-chabad-gold/15 px-1.5 py-0.5 rounded-full">Em breve</span>
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onOpenPushka ? onOpenPushka() : handleNav('tzedaka')} className="hover:text-chabad-gold text-amber-400 font-medium transition-colors flex items-center gap-1.5">
+                  <Coins className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Cofrinho de Tsedacá (Pushka)</span>
                 </button>
               </li>
               <li>

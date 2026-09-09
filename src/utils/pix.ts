@@ -102,3 +102,19 @@ export function generatePixPayload({
 
   return `${rawPayload}${crc}`;
 }
+
+export function generatePixCopyPaste(amount?: number, description?: string, pixKey: string = 'kitov@chabadcuritiba.com'): string {
+  return generatePixPayload({
+    pixKey,
+    merchantName: 'BEIT CHABAD CURITIBA',
+    merchantCity: 'CURITIBA',
+    amount: amount && amount > 0 ? amount : undefined,
+    txId: 'TSD' + Math.floor(Math.random() * 89999 + 10000),
+    description: description || 'TSEDACA CHABAD'
+  });
+}
+
+export function generatePixQrCodeUrl(payload: string): string {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(payload)}`;
+}
+

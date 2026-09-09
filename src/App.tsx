@@ -7,6 +7,7 @@ import { OhelModal } from './components/OhelModal';
 import { AudioPlayerWidget } from './components/AudioPlayerWidget';
 import { PushNotificationPrompt } from './components/PushNotificationPrompt';
 import { DailyNoticeNotification } from './components/DailyNoticeNotification';
+import { PushkaModal } from './components/PushkaModal';
 
 // Pages
 import { Home } from './pages/Home';
@@ -29,6 +30,7 @@ import { CuritibaInfo } from './pages/CuritibaInfo';
 import { FotosRevista } from './pages/FotosRevista';
 import { FaleConosco } from './pages/FaleConosco';
 import { AdminPanel } from './pages/AdminPanel';
+import { TzedakaPage } from './pages/TzedakaPage';
 
 import { CommunityEvent } from './types';
 import { fetchRemoteEvents, fetchRemoteRsvps, fetchRemoteDonations } from './utils/cloudSync';
@@ -44,6 +46,7 @@ export const App: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<CommunityEvent | null>(null);
   const [donationModalOpen, setDonationModalOpen] = useState(false);
   const [ohelModalOpen, setOhelModalOpen] = useState(false);
+  const [pushkaModalOpen, setPushkaModalOpen] = useState(false);
 
   useEffect(() => {
     // Background cloud sync for all devices & incognito
@@ -79,6 +82,7 @@ export const App: React.FC = () => {
             onSelectEvent={handleSelectEvent}
             onOpenDonate={() => setDonationModalOpen(true)}
             onOpenOhel={() => setOhelModalOpen(true)}
+            onOpenPushka={() => setPushkaModalOpen(true)}
           />
         );
       case 'quem-somos':
@@ -123,6 +127,8 @@ export const App: React.FC = () => {
         return <FotosRevista />;
       case 'fale-conosco':
         return <FaleConosco />;
+      case 'tzedaka':
+        return <TzedakaPage />;
       case 'admin':
         return <AdminPanel />;
       default:
@@ -132,6 +138,7 @@ export const App: React.FC = () => {
             onSelectEvent={handleSelectEvent}
             onOpenDonate={() => setDonationModalOpen(true)}
             onOpenOhel={() => setOhelModalOpen(true)}
+            onOpenPushka={() => setPushkaModalOpen(true)}
           />
         );
     }
@@ -148,6 +155,7 @@ export const App: React.FC = () => {
           currentPage={currentPage}
           onNavigate={handleNavigate}
           onOpenDonate={() => setDonationModalOpen(true)}
+          onOpenPushka={() => setPushkaModalOpen(true)}
         />
       )}
 
@@ -161,8 +169,19 @@ export const App: React.FC = () => {
         <Footer
           onNavigate={handleNavigate}
           onOpenDonate={() => setDonationModalOpen(true)}
+          onOpenPushka={() => setPushkaModalOpen(true)}
         />
       )}
+
+      {/* Pushka / e-Tsedacá Modal */}
+      <PushkaModal
+        isOpen={pushkaModalOpen}
+        onClose={() => setPushkaModalOpen(false)}
+        onOpenDonate={() => {
+          setPushkaModalOpen(false);
+          setDonationModalOpen(true);
+        }}
+      />
 
       {/* Donation Modal */}
       <DonationModal
