@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.chabadcuritiba.twa",
+      "sha256_cert_fingerprints": [
+        "3D:1D:5E:2E:7F:D6:BA:19:19:5A:69:9B:F3:D3:DE:BD:CB:8D:4F:F9:F0:31:A4:03:84:AB:9D:42:47:C7:D9:42"
+      ]
+    }
+  }
+]
