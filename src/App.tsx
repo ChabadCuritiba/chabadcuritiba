@@ -128,7 +128,7 @@ export const App: React.FC = () => {
       case 'fale-conosco':
         return <FaleConosco />;
       case 'tzedaka':
-        return <TzedakaPage />;
+        return <TzedakaPage onNavigate={handleNavigate} />;
       case 'admin':
         return <AdminPanel />;
       default:
@@ -138,13 +138,13 @@ export const App: React.FC = () => {
             onSelectEvent={handleSelectEvent}
             onOpenDonate={() => setDonationModalOpen(true)}
             onOpenOhel={() => setOhelModalOpen(true)}
-            onOpenPushka={() => setPushkaModalOpen(true)}
+            onOpenPushka={() => handleNavigate('tzedaka')}
           />
         );
     }
   };
 
-  const hideHeaderFooter = currentPage === 'eventos' || currentPage === 'rsvp';
+  const hideHeaderFooter = currentPage === 'eventos' || currentPage === 'rsvp' || currentPage === 'tzedaka';
 
   return (
     <div className="min-h-screen flex flex-col bg-chabad-warm text-slate-800 antialiased font-sans">
@@ -155,7 +155,7 @@ export const App: React.FC = () => {
           currentPage={currentPage}
           onNavigate={handleNavigate}
           onOpenDonate={() => setDonationModalOpen(true)}
-          onOpenPushka={() => setPushkaModalOpen(true)}
+          onOpenPushka={() => handleNavigate('tzedaka')}
         />
       )}
 
@@ -169,7 +169,7 @@ export const App: React.FC = () => {
         <Footer
           onNavigate={handleNavigate}
           onOpenDonate={() => setDonationModalOpen(true)}
-          onOpenPushka={() => setPushkaModalOpen(true)}
+          onOpenPushka={() => handleNavigate('tzedaka')}
         />
       )}
 
