@@ -271,6 +271,15 @@ export async function fetchSentNotifications(): Promise<SentNotification[]> {
 export async function showLocalSystemNotification(title: string, body: string, url: string = '/'): Promise<boolean> {
   if (typeof window === 'undefined' || !('Notification' in window)) return false;
 
+  // Immediate Hardware vibration on Android device
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      navigator.vibrate([300, 100, 300, 100, 300]);
+    } catch (e) {
+      // continue
+    }
+  }
+
   try {
     let permission = Notification.permission;
     if (permission !== 'granted') {
@@ -278,25 +287,18 @@ export async function showLocalSystemNotification(title: string, body: string, u
       if (permission !== 'granted') return false;
     }
 
-    // Hardware vibration on Android device
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      try {
-        navigator.vibrate([300, 100, 300, 100, 300]);
-      } catch (e) {
-        // continue
-      }
-    }
-
     // 1. Service Worker Registration (Required on Android / Mobile Chrome / TWA)
     if ('serviceWorker' in navigator) {
       try {
-        let reg = await navigator.serviceWorker.getRegistration();
+        let reg = await navigator.serviceWorker.ready.catch(() => undefined);
         if (!reg) {
-          reg = await navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+          reg = await navigator.serviceWorker.getRegistration().catch(() => undefined);
         }
         if (!reg) {
+          await navigator.serviceWorker.register('/sw.js').catch(() => undefined);
           reg = await navigator.serviceWorker.ready.catch(() => undefined);
         }
+
         if (reg && 'showNotification' in reg) {
           await reg.showNotification(title, {
             body,
@@ -304,7 +306,7 @@ export async function showLocalSystemNotification(title: string, body: string, u
             badge: '/favicon.png',
             data: { url },
             vibrate: [300, 100, 300, 100, 300],
-            tag: 'chabad-notice-' + (Math.floor(Date.now() / 60000)),
+            tag: 'chabad-notice-' + Date.now(),
             renotify: true,
             requireInteraction: true,
             silent: false

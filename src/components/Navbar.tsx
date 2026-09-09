@@ -43,16 +43,41 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
   };
 
   const handleNotificationClick = async () => {
+    // Immediate vibration on touch
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([300, 100, 300, 100, 300]);
+      } catch (e) {}
+    }
+
+    if (typeof window === 'undefined' || !('Notification' in window)) {
+      alert('Notificações não são suportadas neste navegador.');
+      return;
+    }
+
+    if (Notification.permission === 'denied') {
+      alert('⚠️ Notificações bloqueadas no Android.\n\nPara ativar:\n1. Acesse Configurações do Celular > Aplicativos > Chabad PR\n2. Ative "Permitir Notificações".');
+      return;
+    }
+
     try {
       const res = await requestNotificationPermission();
-      const template = getDailyTimeBasedNotificationTemplate();
-      await showLocalSystemNotification(
-        template.title,
-        template.body,
-        template.url
-      );
-    } catch (e) {
+      if (res.success || Notification.permission === 'granted') {
+        const template = getDailyTimeBasedNotificationTemplate();
+        const sent = await showLocalSystemNotification(
+          template.title,
+          template.body,
+          template.url
+        );
+        if (sent) {
+          alert('🔔 Notificação enviada! Olhe na barra superior de notificações do seu celular.');
+        }
+      } else {
+        alert('Permissão de notificação: ' + (res.error || 'Negada'));
+      }
+    } catch (e: any) {
       console.warn('Error triggering notification:', e);
+      alert('Erro ao disparar notificação: ' + (e?.message || e));
     }
   };
 
