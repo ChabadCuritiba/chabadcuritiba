@@ -5,6 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.chabadcuritiba.twa",
       "sha256_cert_fingerprints": [
+        "92:E6:44:95:A0:F5:4F:97:51:DA:F3:22:E8:26:B3:A6:93:76:FB:20:15:7D:A9:E4:25:D5:96:74:AD:2F:1B:EF",
+        "89:20:29:6A:AE:B0:C4:A0:54:38:1F:E4:66:6E:44:77:65:DA:06:2E:D3:11:08:1C:97:C8:54:B6:36:0F:C2:61",
         "C9:DE:F7:C0:4D:28:7E:55:AD:F7:BC:72:53:09:35:B9:50:1F:5C:18:C9:50:F8:4B:2A:11:E8:36:96:75:E2:7C"
       ]
     }
