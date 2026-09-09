@@ -53,8 +53,8 @@ export const AdminPanel: React.FC = () => {
   const [viewingReceipt, setViewingReceipt] = useState<RsvpRecord | null>(null);
 
   // Push Notification Form State
-  const [notifTitle, setNotifTitle] = useState('🕯️ Shabat Shalom!');
-  const [notifBody, setNotifBody] = useState('Acendimento das velas hoje em Curitiba às 17:49. Shabat Shalom a toda a comunidade!');
+  const [notifTitle, setNotifTitle] = useState('');
+  const [notifBody, setNotifBody] = useState('');
   const [notifUrl, setNotifUrl] = useState('/#home');
   const [isSendingPush, setIsSendingPush] = useState(false);
   const [isTestingPush, setIsTestingPush] = useState(false);

@@ -374,8 +374,9 @@ export async function broadcastPushNotification(params: {
   const subscribers = await fetchPushSubscribers();
   const recipientCount = Math.max(subscribers.length, 1);
 
+  const broadcastUniqueId = 'broadcast_' + Date.now();
   const notificationRecord: SentNotification = {
-    id: 'notif_' + Date.now(),
+    id: broadcastUniqueId,
     title,
     body,
     url,
@@ -394,7 +395,7 @@ export async function broadcastPushNotification(params: {
     console.warn(e);
   }
 
-  // 2. Persist in Supabase sent_notifications table
+  // 2. Persist in Supabase sent_notifications table (if table exists)
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/sent_notifications`, {
       method: 'POST',
@@ -418,16 +419,16 @@ export async function broadcastPushNotification(params: {
     console.warn('[PushNotification] Error saving notification record to Supabase:', err);
   }
 
-  // 3. Sync to Supabase events table for instant cross-device delivery
+  // 3. Sync to Supabase events table as unique broadcast row for instant cross-device delivery
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/events`, {
       method: 'POST',
       headers: {
         ...HEADERS,
-        'Prefer': 'resolution=merge-duplicates'
+        'Prefer': 'return=representation'
       },
       body: JSON.stringify({
-        id: 'live_broadcast_notice',
+        id: broadcastUniqueId,
         title: notificationRecord.title,
         subtitle: notificationRecord.body,
         category: 'Notificacao',
@@ -439,7 +440,6 @@ export async function broadcastPushNotification(params: {
         featured: false,
         registration_open: false,
         highlights: [
-          `__broadcast_id:${notificationRecord.id}`,
           `__broadcast_url:${notificationRecord.url}`,
           `__broadcast_time:${Date.now()}`
         ]
