@@ -269,16 +269,18 @@ export async function fetchSentNotifications(): Promise<SentNotification[]> {
  * Show a direct system notification (works across service worker or native Notification)
  */
 export async function showLocalSystemNotification(title: string, body: string, url: string = '/'): Promise<boolean> {
-  if (typeof window === 'undefined' || !('Notification' in window)) return false;
+  if (typeof window === 'undefined') return false;
 
-  // Immediate Hardware vibration on Android device
+  // 1. Immediate Physical Device Vibration on Android hardware
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     try {
-      navigator.vibrate([300, 100, 300, 100, 300]);
+      navigator.vibrate([400, 150, 400, 150, 400]);
     } catch (e) {
       // continue
     }
   }
+
+  if (!('Notification' in window)) return false;
 
   try {
     let permission = Notification.permission;
@@ -287,53 +289,71 @@ export async function showLocalSystemNotification(title: string, body: string, u
       if (permission !== 'granted') return false;
     }
 
-    // 1. Service Worker Registration (Required on Android / Mobile Chrome / TWA)
+    const notifOptions: NotificationOptions = {
+      body: body || '',
+      icon: '/icons/icon-192.png',
+      badge: '/favicon.png',
+      data: { url: url || '/' },
+      vibrate: [400, 150, 400, 150, 400],
+      tag: 'chabad-notice-' + Date.now(),
+      renotify: true,
+      requireInteraction: true,
+      silent: false
+    } as any;
+
+    let shown = false;
+
+    // 2. Service Worker Registration (Required on Android / Mobile Chrome / TWA)
     if ('serviceWorker' in navigator) {
       try {
-        let reg = await navigator.serviceWorker.ready.catch(() => undefined);
-        if (!reg) {
-          reg = await navigator.serviceWorker.getRegistration().catch(() => undefined);
-        }
-        if (!reg) {
-          await navigator.serviceWorker.register('/sw.js').catch(() => undefined);
-          reg = await navigator.serviceWorker.ready.catch(() => undefined);
+        const getSwReg = async (): Promise<ServiceWorkerRegistration | undefined> => {
+          const existing = await navigator.serviceWorker.getRegistration().catch(() => undefined);
+          if (existing && existing.active) return existing;
+
+          const readyPromise = navigator.serviceWorker.ready.catch(() => undefined);
+          const timeoutPromise = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 1200));
+          const readyReg = await Promise.race([readyPromise, timeoutPromise]);
+          if (readyReg) return readyReg;
+
+          const newReg = await navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+          return newReg || existing;
+        };
+
+        const reg = await getSwReg();
+        if (reg && 'showNotification' in reg) {
+          await reg.showNotification(title, notifOptions);
+          shown = true;
         }
 
-        if (reg && 'showNotification' in reg) {
-          await reg.showNotification(title, {
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'SHOW_NOTIFICATION',
+            title,
             body,
-            icon: '/icons/icon-192.png',
-            badge: '/favicon.png',
-            data: { url },
-            vibrate: [300, 100, 300, 100, 300],
-            tag: 'chabad-notice-' + Date.now(),
-            renotify: true,
-            requireInteraction: true,
-            silent: false
-          } as any);
-          return true;
+            url
+          });
+          shown = true;
         }
       } catch (swErr) {
         console.warn('[PushNotification] SW showNotification error:', swErr);
       }
     }
 
-    // 2. Fallback to standard Notification API
-    try {
-      new Notification(title, {
-        body,
-        icon: '/icons/icon-192.png',
-        badge: '/favicon.png',
-        data: { url }
-      });
-      return true;
-    } catch (notifErr) {
-      console.warn('[PushNotification] Native Notification constructor failed:', notifErr);
+    // 3. Fallback to standard Notification API (desktop browsers)
+    if (!shown) {
+      try {
+        new Notification(title, notifOptions);
+        shown = true;
+      } catch (notifErr) {
+        console.warn('[PushNotification] Native Notification constructor failed:', notifErr);
+      }
     }
+
+    return shown;
   } catch (err) {
     console.warn('[PushNotification] General error showing notification:', err);
+    return false;
   }
-  return false;
 }
 
 /**

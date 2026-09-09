@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chabad-curitiba-cache-v2';
+const CACHE_NAME = 'chabad-curitiba-cache-v3';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -10,8 +10,13 @@ const PRECACHE_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(PRECACHE_ASSETS))
+      .catch((err) => {
+        console.warn('[SW] Pre-cache non-fatal error:', err);
+      })
   );
 });
 
@@ -70,7 +75,7 @@ self.addEventListener('push', (event) => {
     body: data.body,
     icon: data.icon || '/icons/icon-192.png',
     badge: '/favicon.png',
-    vibrate: [200, 100, 200, 100, 200],
+    vibrate: [400, 150, 400, 150, 400],
     data: {
       url: data.url || '/'
     },
@@ -78,7 +83,8 @@ self.addEventListener('push', (event) => {
       { action: 'open', title: 'Abrir App' }
     ],
     tag: 'chabad-notice-' + Date.now(),
-    renotify: true
+    renotify: true,
+    requireInteraction: true
   };
 
   event.waitUntil(self.registration.showNotification(data.title, options));
@@ -115,7 +121,10 @@ self.addEventListener('message', (event) => {
       icon: '/icons/icon-192.png',
       badge: '/favicon.png',
       data: { url: url || '/' },
-      vibrate: [200, 100, 200]
+      vibrate: [400, 150, 400, 150, 400],
+      tag: 'chabad-notice-' + Date.now(),
+      renotify: true,
+      requireInteraction: true
     });
   }
 });

@@ -41,10 +41,10 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
           if (Array.isArray(rows) && rows.length > 0) {
             const latest = rows[0];
             const lastDeliveredId = localStorage.getItem('chabad_last_delivered_broadcast_id');
-            const sentTime = latest.sent_at ? new Date(latest.sent_at).getTime() : 0;
+            const sentTime = latest.sent_at ? new Date(latest.sent_at).getTime() : Date.now();
             
-            // If sent in the last 15 minutes and not yet delivered to this device
-            if (lastDeliveredId !== latest.id && (Date.now() - sentTime < 15 * 60 * 1000)) {
+            // If sent within the last 2 hours and not yet delivered to this device
+            if (lastDeliveredId !== latest.id && (Math.abs(Date.now() - sentTime) < 2 * 60 * 60 * 1000)) {
               localStorage.setItem('chabad_last_delivered_broadcast_id', latest.id);
               showLocalSystemNotification(latest.title, latest.body, latest.url || '/#home');
             }
@@ -56,7 +56,7 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
     };
 
     checkForNewBroadcasts();
-    const pollInterval = setInterval(checkForNewBroadcasts, 8000); // Check every 8 seconds
+    const pollInterval = setInterval(checkForNewBroadcasts, 4000); // Check every 4 seconds
 
     // 3. Real-time DOM event listener (fires when admin sends broadcast in same window)
     const handleCustomBroadcast = (event: any) => {
