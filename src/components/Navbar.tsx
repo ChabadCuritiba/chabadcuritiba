@@ -310,20 +310,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                 Eventos & RSVP
               </button>
 
-              {/* Tsedacá Diária Link */}
-              <button 
-                onClick={() => onOpenPushka ? onOpenPushka() : handleNavClick('tzedaka')}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center space-x-1.5 ${
-                  currentPage === 'tzedaka'
-                    ? 'text-amber-700 bg-amber-50 border border-amber-200 font-bold' 
-                    : 'text-amber-800 hover:text-amber-900 hover:bg-amber-50/80'
-                }`}
-                title="Cofrinho de Tsedacá Digital"
-              >
-                <Coins className="w-4 h-4 text-amber-600 animate-bounce" />
-                <span>Tsedacá Diária</span>
-              </button>
-
               {/* Educação & Juventude */}
               <div 
                 className="relative group"
@@ -441,28 +427,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
               </div>
             </nav>
 
-            {/* Right CTA - Pushka & eChabad Doação Button */}
-            <div className="hidden lg:flex items-center space-x-2.5">
-              <button 
-                onClick={handleNotificationClick}
-                className="p-2 rounded-xl text-slate-600 hover:text-chabad hover:bg-slate-100 transition-colors"
-                title="Ativar e Testar Notificações"
-              >
-                <Bell className="w-5 h-5 text-amber-600" />
-              </button>
-
-              <button 
-                onClick={() => onOpenPushka ? onOpenPushka() : handleNavClick('tzedaka')}
-                className="bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 border border-amber-400/40 px-3.5 py-2.5 rounded-xl font-bold shadow-xs hover:shadow-sm transition-all flex items-center space-x-1.5 text-sm group"
-                title="Abrir Cofrinho de Tsedacá Digital"
-              >
-                <Coins className="w-4 h-4 text-amber-600 group-hover:rotate-12 transition-transform" />
-                <span>Cofrinho</span>
-              </button>
-
+            {/* Right CTA - eChabad Doação Button */}
+            <div className="hidden lg:flex items-center space-x-3">
               <button 
                 onClick={onOpenDonate}
-                className="bg-chabad hover:bg-chabad-pine text-white px-4 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center space-x-2 text-sm group"
+                className="bg-chabad hover:bg-chabad-pine text-white px-5 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center space-x-2 text-sm group"
               >
                 <Heart className="w-4 h-4 text-chabad-gold group-hover:scale-110 transition-transform fill-chabad-gold/20" />
                 <span>Doação eChabad</span>
@@ -470,27 +439,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
             </div>
 
             {/* Mobile Menu Toggle Button */}
-            <div className="flex xl:hidden items-center space-x-1.5">
-              <button 
-                onClick={handleNotificationClick}
-                className="p-2 text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition-colors"
-                title="Ativar Notificações"
-              >
-                <Bell className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => onOpenPushka ? onOpenPushka() : handleNavClick('tzedaka')}
-                className="bg-amber-100/90 text-amber-900 border border-amber-300/80 px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1"
-                title="Tsedacá Diária"
-              >
-                <Coins className="w-3.5 h-3.5 text-amber-700" />
-                <span>Pushka</span>
-              </button>
-
+            <div className="flex xl:hidden items-center space-x-2">
               <button 
                 onClick={onOpenDonate}
-                className="bg-chabad text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
+                className="bg-chabad text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-sm"
               >
                 <Heart className="w-3.5 h-3.5 text-chabad-gold" />
                 <span>Doar</span>

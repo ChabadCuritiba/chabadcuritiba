@@ -141,65 +141,6 @@ export const Home: React.FC<HomeProps> = ({
         <ShabbatWidget onLearnMore={() => onNavigate('colel')} />
       </section>
 
-      {/* 2.5. DIGITAL PUSHKA (COFRINHO DE TSEDACÁ) FEATURE BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-amber-500/10 via-amber-50 to-amber-100/50 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-          {/* Decorative Coin Silhouette */}
-          <div className="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
-            <Coins className="w-64 h-64 text-amber-700" />
-          </div>
-
-          <div className="flex items-center space-x-5 z-10">
-            <div className="relative shrink-0">
-              <div className="w-16 h-20 bg-gradient-to-br from-chabad-navy to-slate-900 rounded-2xl border-2 border-chabad-gold shadow-xl flex flex-col items-center justify-center p-2 text-center transform hover:scale-105 transition-transform cursor-pointer"
-                onClick={() => onOpenPushka ? onOpenPushka() : onNavigate('tzedaka')}
-              >
-                <div className="w-6 h-1 bg-black/80 rounded-full mb-2"></div>
-                <img 
-                  src="/assets/pushka-logo.png" 
-                  alt="Pushka Chabad" 
-                  className="w-10 h-10 object-contain drop-shadow"
-                />
-              </div>
-              <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow animate-pulse">
-                🪙 PIX
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 uppercase tracking-wide bg-amber-200/60 px-2.5 py-0.5 rounded-full">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span>Mitzvá Diária Interativa</span>
-              </div>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-slate-900">
-                Cofrinho de Tsedacá Digital
-              </h3>
-              <p className="text-slate-600 text-xs sm:text-sm max-w-xl">
-                Coloque moedas diariamente no cofrinho virtual do Beit Chabad, acumule suas boas ações e transfira quando desejar com 1 clique via PIX!
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 z-10 shrink-0 w-full md:w-auto justify-end">
-            <button
-              onClick={() => onOpenPushka ? onOpenPushka() : onNavigate('tzedaka')}
-              className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white font-bold px-6 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 text-sm group"
-            >
-              <Coins className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-              <span>Colocar Moeda Agora</span>
-            </button>
-
-            <button
-              onClick={() => onNavigate('tzedaka')}
-              className="w-full sm:w-auto bg-white/80 hover:bg-white text-slate-700 font-semibold px-4 py-3 rounded-2xl border border-amber-200 text-sm transition-all flex items-center justify-center space-x-1"
-            >
-              <span>Ver Detalhes</span>
-              <ArrowRight className="w-4 h-4 text-slate-500" />
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* 3. CORE SERVICES GRID (Mikvê, Bar Mitzvah, KiTov Casher, Ganênu, Juventude) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">

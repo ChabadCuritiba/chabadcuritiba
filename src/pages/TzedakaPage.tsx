@@ -315,15 +315,6 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
                   className="w-full h-auto object-cover max-h-[480px] sm:max-h-[520px] select-none pointer-events-none"
                 />
 
-                {/* Coin Slot Interactive Touch Zone Indicator */}
-                <div 
-                  onClick={() => handleDropCoin()}
-                  className="absolute top-[18%] left-1/2 -translate-x-1/2 w-32 h-14 rounded-full cursor-pointer hover:bg-yellow-400/10 flex items-center justify-center transition-colors group"
-                  title="Clique aqui para inserir moeda!"
-                >
-                  <div className="w-16 h-2 bg-black/60 rounded-full border border-amber-300/60 shadow-inner group-hover:border-amber-300 transition-colors animate-pulse"></div>
-                </div>
-
                 {/* Custom Beit Chabad 40 Anos Badge overlay precisely positioned on the golden medal area */}
                 <div className="absolute top-[49.5%] left-1/2 -translate-x-1/2 w-[34%] h-[17%] flex items-center justify-center pointer-events-none">
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-amber-400/90 via-amber-200/90 to-amber-500/90 metal-badge-emboss p-1.5 flex items-center justify-center">
@@ -333,12 +324,6 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
                       className="w-full h-full object-contain filter drop-shadow-md"
                     />
                   </div>
-                </div>
-
-                {/* Pushka Drop Tap Hint */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-950/80 backdrop-blur-md px-3.5 py-1 rounded-full border border-amber-500/30 text-[11px] font-bold text-amber-300 flex items-center space-x-1.5">
-                  <Coins className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Toque para depositar moedas</span>
                 </div>
               </div>
 
