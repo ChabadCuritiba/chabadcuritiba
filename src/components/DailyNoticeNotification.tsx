@@ -32,6 +32,38 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
     // 2. Real-time Supabase Poller for newly broadcasted notifications
     const checkForNewBroadcasts = async () => {
       if (typeof window === 'undefined' || !('Notification' in window) || Notification.permission !== 'granted') return;
+
+      // A. Check live_broadcast_notice row in Supabase events table
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/events?id=eq.live_broadcast_notice&select=*`, {
+          headers: HEADERS
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          if (Array.isArray(rows) && rows.length > 0) {
+            const noticeRow = rows[0];
+            const highlights: string[] = Array.isArray(noticeRow.highlights) ? noticeRow.highlights : [];
+            const idTag = highlights.find((h: string) => typeof h === 'string' && h.startsWith('__broadcast_id:'));
+            const urlTag = highlights.find((h: string) => typeof h === 'string' && h.startsWith('__broadcast_url:'));
+            const timeTag = highlights.find((h: string) => typeof h === 'string' && h.startsWith('__broadcast_time:'));
+
+            const noticeId = idTag ? idTag.replace('__broadcast_id:', '') : (noticeRow.id + '_' + noticeRow.created_at);
+            const noticeUrl = urlTag ? urlTag.replace('__broadcast_url:', '') : '/#home';
+            const noticeTime = timeTag ? Number(timeTag.replace('__broadcast_time:', '')) : new Date(noticeRow.created_at).getTime();
+
+            const lastDeliveredId = localStorage.getItem('chabad_last_delivered_broadcast_id');
+            // If new and broadcasted within the last 2 hours
+            if (lastDeliveredId !== noticeId && (Math.abs(Date.now() - noticeTime) < 2 * 60 * 60 * 1000)) {
+              localStorage.setItem('chabad_last_delivered_broadcast_id', noticeId);
+              showLocalSystemNotification(noticeRow.title, noticeRow.subtitle || noticeRow.description || '', noticeUrl);
+            }
+          }
+        }
+      } catch (e) {
+        // continue
+      }
+
+      // B. Check sent_notifications table (when created)
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/sent_notifications?select=*&order=sent_at.desc&limit=1`, {
           headers: HEADERS
@@ -56,7 +88,15 @@ export const DailyNoticeNotification: React.FC<DailyNoticeProps> = () => {
     };
 
     checkForNewBroadcasts();
-    const pollInterval = setInterval(checkForNewBroadcasts, 4000); // Check every 4 seconds
+    const pollInterval = setInterval(checkForNewBroadcasts, 3000); // Check every 3 seconds
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkForNewBroadcasts();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', checkForNewBroadcasts);
 
     // 3. Real-time DOM event listener (fires when admin sends broadcast in same window)
     const handleCustomBroadcast = (event: any) => {

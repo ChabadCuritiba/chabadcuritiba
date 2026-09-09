@@ -394,7 +394,7 @@ export async function broadcastPushNotification(params: {
     console.warn(e);
   }
 
-  // 2. Persist in Supabase
+  // 2. Persist in Supabase sent_notifications table
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/sent_notifications`, {
       method: 'POST',
@@ -418,7 +418,38 @@ export async function broadcastPushNotification(params: {
     console.warn('[PushNotification] Error saving notification record to Supabase:', err);
   }
 
-  // 3. Dispatch to local service worker if running on device
+  // 3. Sync to Supabase events table for instant cross-device delivery
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/events`, {
+      method: 'POST',
+      headers: {
+        ...HEADERS,
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({
+        id: 'live_broadcast_notice',
+        title: notificationRecord.title,
+        subtitle: notificationRecord.body,
+        category: 'Notificacao',
+        date: new Date().toISOString().slice(0, 10),
+        time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        location: 'Curitiba',
+        price: 0,
+        description: notificationRecord.body,
+        featured: false,
+        registration_open: false,
+        highlights: [
+          `__broadcast_id:${notificationRecord.id}`,
+          `__broadcast_url:${notificationRecord.url}`,
+          `__broadcast_time:${Date.now()}`
+        ]
+      })
+    });
+  } catch (err) {
+    console.warn('[PushNotification] Error syncing broadcast to events table:', err);
+  }
+
+  // 4. Dispatch to local service worker if running on device
   try {
     await showLocalSystemNotification(title, body, url);
   } catch (e) {

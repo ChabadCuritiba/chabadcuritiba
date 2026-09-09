@@ -95,7 +95,9 @@ export async function fetchSupabaseEvents(): Promise<CommunityEvent[]> {
     if (res.ok) {
       const rows = await res.json();
       if (Array.isArray(rows)) {
-        const mapped: CommunityEvent[] = rows.map(r => {
+        const mapped: CommunityEvent[] = rows
+          .filter(r => r.category !== 'Notificacao' && r.id !== 'live_broadcast_notice')
+          .map(r => {
           let youthPriceVal: number | undefined = undefined;
           if (r.youth_price !== null && r.youth_price !== undefined) {
             youthPriceVal = Number(r.youth_price);
