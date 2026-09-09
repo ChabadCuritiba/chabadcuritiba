@@ -278,7 +278,16 @@ export async function showLocalSystemNotification(title: string, body: string, u
       if (permission !== 'granted') return false;
     }
 
-    // 1. Service Worker Registration (Required on Android / Mobile Chrome)
+    // Hardware vibration on Android device
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([300, 100, 300, 100, 300]);
+      } catch (e) {
+        // continue
+      }
+    }
+
+    // 1. Service Worker Registration (Required on Android / Mobile Chrome / TWA)
     if ('serviceWorker' in navigator) {
       try {
         let reg = await navigator.serviceWorker.getRegistration();
@@ -294,9 +303,11 @@ export async function showLocalSystemNotification(title: string, body: string, u
             icon: '/icons/icon-192.png',
             badge: '/favicon.png',
             data: { url },
-            vibrate: [200, 100, 200, 100, 200],
-            tag: 'chabad-curitiba-' + Date.now(),
-            renotify: true
+            vibrate: [300, 100, 300, 100, 300],
+            tag: 'chabad-notice-' + (Math.floor(Date.now() / 60000)),
+            renotify: true,
+            requireInteraction: true,
+            silent: false
           } as any);
           return true;
         }
@@ -305,7 +316,7 @@ export async function showLocalSystemNotification(title: string, body: string, u
       }
     }
 
-    // 2. Fallback to standard desktop Notification API
+    // 2. Fallback to standard Notification API
     try {
       new Notification(title, {
         body,
