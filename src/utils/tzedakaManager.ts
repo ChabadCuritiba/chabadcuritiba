@@ -103,7 +103,8 @@ export function emptyPushka(): PushkaState {
   const current = getInitialPushkaState();
   const updated: PushkaState = {
     ...current,
-    balance: 0
+    balance: 0,
+    drops: []
   };
   savePushkaState(updated);
   return updated;

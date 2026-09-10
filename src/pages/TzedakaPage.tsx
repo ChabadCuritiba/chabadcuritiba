@@ -197,9 +197,29 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
         }
 
         .silver-coin-disc {
-          background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f8fafc 20%, #e2e8f0 45%, #cbd5e1 70%, #94a3b8 88%, #64748b 100%);
-          border: 3px solid #f8fafc;
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 255, 255, 0.8), inset 0 3px 6px rgba(255, 255, 255, 1), inset 0 -3px 6px rgba(51, 65, 85, 0.9);
+          background: 
+            radial-gradient(circle at 45% 40%, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 20%, rgba(203,213,225,0.7) 45%, rgba(148,163,184,0.9) 75%, rgba(71,85,105,1) 100%),
+            conic-gradient(from 45deg, #cbd5e1 0deg, #ffffff 40deg, #94a3b8 90deg, #f8fafc 140deg, #64748b 180deg, #ffffff 220deg, #94a3b8 270deg, #f1f5f9 320deg, #cbd5e1 360deg);
+          border: 3.5px solid #e2e8f0;
+          box-shadow: 
+            0 16px 36px rgba(0, 0, 0, 0.75), 
+            0 0 35px rgba(255, 255, 255, 0.7), 
+            inset 0 3px 5px rgba(255, 255, 255, 1), 
+            inset 0 -3px 5px rgba(30, 41, 59, 0.9);
+        }
+
+        .silver-coin-inner {
+          border: 1.5px dashed rgba(100, 116, 139, 0.65);
+          box-shadow: 
+            inset 0 1px 3px rgba(255, 255, 255, 0.8),
+            0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .silver-coin-text {
+          color: #1e293b;
+          text-shadow: 
+            0 1px 1px rgba(255, 255, 255, 1),
+            0 -1px 1px rgba(71, 85, 105, 0.6);
         }
 
         .gold-coin-glow {
@@ -286,9 +306,19 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
               className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-straight-coin-drop"
               key={activeCoinAnim.id}
             >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full silver-coin-disc flex flex-col items-center justify-center text-slate-900 font-black text-sm sm:text-base shadow-2xl">
-                <span className="leading-tight font-black tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">R$ {activeCoinAnim.value}</span>
-                <span className="text-xs sm:text-sm leading-none font-bold mt-0.5 opacity-90">✡️</span>
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full silver-coin-disc p-1.5 flex items-center justify-center relative select-none shadow-2xl">
+                {/* Concentric engraved milled ring */}
+                <div className="w-full h-full rounded-full silver-coin-inner flex flex-col items-center justify-center relative bg-gradient-to-b from-white/40 via-slate-200/20 to-slate-400/40">
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 silver-coin-text">
+                    צדקה
+                  </span>
+                  <span className="leading-none font-black text-sm sm:text-base tracking-tighter silver-coin-text">
+                    R$ {activeCoinAnim.value}
+                  </span>
+                  <span className="text-[10px] sm:text-xs leading-none font-bold mt-0.5 silver-coin-text opacity-90">
+                    ✡️
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -537,8 +567,12 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
 
             <div className="flex-1 overflow-y-auto py-4 space-y-2.5">
               {pushkaState.drops.length === 0 ? (
-                <div className="text-center py-8 text-slate-500 text-sm">
-                  Nenhuma moeda inserida recentemente no cofrinho.
+                <div className="text-center py-10 px-4 text-slate-500 text-sm flex flex-col items-center justify-center space-y-2">
+                  <Coins className="w-10 h-10 text-slate-600 opacity-60" />
+                  <p className="font-semibold text-slate-400">Cofrinho vazio ou recém-zerado</p>
+                  <p className="text-xs text-slate-500 max-w-xs">
+                    O extrato acompanha o ciclo atual e é zerado sempre que você esvazia seu cofrinho. Coloque uma moeda para começar!
+                  </p>
                 </div>
               ) : (
                 pushkaState.drops.map((d) => (
