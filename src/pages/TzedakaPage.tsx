@@ -20,14 +20,14 @@ interface TzedakaPageProps {
 }
 
 const PRESET_COINS = [
-  { label: 'R$ 1', value: 1, desc: '1 Moeda' },
-  { label: 'R$ 2', value: 2, desc: 'Bênção' },
-  { label: 'R$ 5', value: 5, desc: 'Mitzvá' },
-  { label: 'R$ 10', value: 10, desc: 'Generosidade' },
-  { label: 'R$ 18', value: 18, desc: 'Chai (Vida ✡️)' },
-  { label: 'R$ 36', value: 36, desc: '2x Chai' },
-  { label: 'R$ 54', value: 54, desc: '3x Chai' },
-  { label: 'R$ 100', value: 100, desc: 'Abundância' }
+  { label: 'R$ 1', value: 1 },
+  { label: 'R$ 2', value: 2 },
+  { label: 'R$ 5', value: 5 },
+  { label: 'R$ 10', value: 10 },
+  { label: 'R$ 18 (Chai ✡️)', value: 18 },
+  { label: 'R$ 36', value: 36 },
+  { label: 'R$ 54', value: 54 },
+  { label: 'R$ 100', value: 100 }
 ];
 
 export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
@@ -149,24 +149,24 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-900 font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-500 selection:text-slate-900 font-sans">
       <style>{`
         @keyframes coinDropIntoPushka {
           0% {
             opacity: 0;
-            transform: translate(-50%, -160px) scale(1.3) rotateX(15deg) rotateY(0deg);
+            transform: translate(-50%, -150px) scale(1.3) rotateX(15deg) rotateY(0deg);
           }
           25% {
             opacity: 1;
-            transform: translate(-50%, -80px) scale(1.1) rotateX(45deg) rotateY(180deg);
+            transform: translate(-50%, -75px) scale(1.1) rotateX(45deg) rotateY(180deg);
           }
           65% {
             opacity: 1;
-            transform: translate(-50%, -15px) scale(0.75) rotateX(75deg) rotateY(360deg);
+            transform: translate(-50%, -12px) scale(0.75) rotateX(75deg) rotateY(360deg);
           }
           90% {
             opacity: 0.95;
-            transform: translate(-50%, 4px) scale(0.32) rotateX(85deg) rotateY(540deg);
+            transform: translate(-50%, 5px) scale(0.32) rotateX(85deg) rotateY(540deg);
           }
           100% {
             opacity: 0;
@@ -197,7 +197,7 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
       `}</style>
 
       {/* Top Header Bar */}
-      <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-amber-500/20 px-4 sm:px-8 py-3.5 sticky top-0 z-30 flex items-center justify-between">
+      <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-amber-500/20 px-4 sm:px-8 py-3 sticky top-0 z-30 flex items-center justify-between">
         <button 
           onClick={handleBack}
           className="flex items-center space-x-2 text-slate-300 hover:text-amber-400 font-semibold text-sm transition-colors group"
@@ -209,16 +209,16 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
           <span className="sm:hidden">Voltar</span>
         </button>
 
-        {/* Center Title Badge */}
+        {/* Center Title */}
         <div className="flex items-center space-x-2 text-center">
           <div className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></div>
-          <h1 className="font-serif text-base sm:text-lg font-bold text-amber-300 tracking-wide">
+          <h1 className="font-serif text-sm sm:text-base font-bold text-amber-300 tracking-wide">
             Cofrinho de Tsedacá Digital
           </h1>
         </div>
 
         {/* Right Tools */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <button 
             onClick={() => setSoundEnabled(!soundEnabled)}
             className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-amber-400 border border-white/10 transition-colors"
@@ -229,197 +229,164 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
 
           <button 
             onClick={() => setShowHistoryModal(true)}
-            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-amber-400 border border-white/10 text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+            className="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-amber-400 border border-white/10 text-xs font-semibold flex items-center space-x-1 transition-colors"
           >
             <History className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden md:inline">Histórico</span>
+            <span className="hidden sm:inline">Extrato</span>
           </button>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 w-full flex flex-col justify-center items-center">
+      {/* Main Interactive Stage: Pushka & Controls Closely Aligned */}
+      <main className="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6 flex-1 w-full flex flex-col justify-center items-center">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center w-full">
-
-          {/* LEFT / CENTER: Official Physical Pushka */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center relative">
-            
-            {/* Ambient Background Aura */}
-            <div className="absolute w-80 sm:w-96 h-80 sm:h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse"></div>
-
-            {/* Streak & Live Balance Floating Badges */}
-            <div className="w-full max-w-sm flex items-center justify-between gap-2 mb-4 px-2">
-              <div className="bg-slate-900/90 border border-amber-500/30 rounded-2xl px-4 py-2 flex items-center space-x-2 shadow-lg backdrop-blur-md">
-                <Flame className="w-5 h-5 text-amber-400 animate-bounce" />
-                <div>
-                  <div className="text-[10px] uppercase font-bold text-amber-400/80 leading-none">Sequência</div>
-                  <div className="text-sm font-bold text-white leading-tight">
-                    {pushkaState.currentStreak || 0} {(pushkaState.currentStreak || 0) === 1 ? 'Dia' : 'Dias'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-amber-600/30 to-amber-500/20 border border-amber-400/40 rounded-2xl px-4 py-2 flex items-center space-x-2 shadow-lg backdrop-blur-md">
-                <Coins className="w-5 h-5 text-amber-300" />
-                <div>
-                  <div className="text-[10px] uppercase font-bold text-amber-300 leading-none">Total no Cofrinho</div>
-                  <div className="text-base font-black text-amber-200 leading-tight">
-                    R$ {pushkaState.balance.toFixed(2).replace('.', ',')}
-                  </div>
-                </div>
+        {/* Top Badges (Streak & Total in Pushka) */}
+        <div className="w-full max-w-lg flex items-center justify-between gap-3 mb-3 px-1">
+          <div className="bg-slate-900/90 border border-amber-500/30 rounded-xl px-3.5 py-1.5 flex items-center space-x-2 shadow-md backdrop-blur-md">
+            <Flame className="w-4 h-4 text-amber-400 animate-bounce" />
+            <div>
+              <div className="text-[9px] uppercase font-bold text-amber-400/80 leading-none">Sequência</div>
+              <div className="text-xs font-bold text-white leading-tight">
+                {pushkaState.currentStreak || 0} {(pushkaState.currentStreak || 0) === 1 ? 'Dia' : 'Dias'}
               </div>
             </div>
+          </div>
 
-            {/* THE OFFICIAL PUSHKA CONTAINER */}
-            <div className="relative w-full max-w-xs sm:max-w-sm flex justify-center items-center py-4">
-              
-              {/* Active Falling 3D Coin (calibrated exactly into the top lid slot at 11.5%) */}
-              {activeCoinAnim && (
-                <div 
-                  className="absolute z-20 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-coin-drop-slot"
-                  key={activeCoinAnim.id}
-                >
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-yellow-100 border-2 border-yellow-200 gold-coin-glow flex flex-col items-center justify-center text-slate-950 font-black text-xs sm:text-sm drop-shadow-2xl">
-                    <span>R$ {activeCoinAnim.value}</span>
-                    <span className="text-[9px] opacity-80 leading-none">✡️</span>
-                  </div>
-                </div>
-              )}
+          <div className="bg-gradient-to-r from-amber-600/30 to-amber-500/20 border border-amber-400/40 rounded-xl px-3.5 py-1.5 flex items-center space-x-2 shadow-md backdrop-blur-md">
+            <Coins className="w-4 h-4 text-amber-300" />
+            <div>
+              <div className="text-[9px] uppercase font-bold text-amber-300 leading-none">Total no Cofrinho</div>
+              <div className="text-sm font-black text-amber-200 leading-tight">
+                R$ {pushkaState.balance.toFixed(2).replace('.', ',')}
+              </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Sparkle FX at Slot Opening */}
-              {sparkleActive && (
-                <div className="absolute top-[8%] left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center justify-center">
-                  <Sparkles className="w-14 h-14 text-yellow-300 animate-spin" />
-                </div>
-              )}
+        {/* COMBINED HERO: Physical Pushka + Immediate Controls */}
+        <div className="w-full max-w-lg bg-slate-900/80 border border-amber-500/30 rounded-3xl p-4 sm:p-6 shadow-2xl backdrop-blur-md flex flex-col items-center relative overflow-hidden">
+          
+          {/* Subtle Ambient Aura */}
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-amber-500/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
-              {/* Pushka Canvas with Official User Image */}
+          {/* THE PUSHKA CANISTER (Compact size so everything fits on 1 screen) */}
+          <div className="relative w-48 sm:w-56 flex justify-center items-center my-1">
+            
+            {/* Active Falling 3D Coin calibrated right into the slot at 11.5% */}
+            {activeCoinAnim && (
               <div 
-                className={`relative rounded-3xl p-3 flex items-center justify-center transform transition-transform select-none ${
-                  pushkaJiggling ? 'animate-pushka-jiggle-physics' : ''
-                }`}
+                className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-coin-drop-slot"
+                key={activeCoinAnim.id}
               >
-                <img 
-                  src="/assets/pushka_official.png" 
-                  alt="Cofrinho Oficial Beit Chabad do Paraná" 
-                  className="w-full h-auto object-contain max-h-[440px] sm:max-h-[480px] drop-shadow-[0_20px_35px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-yellow-100 border-2 border-yellow-200 gold-coin-glow flex flex-col items-center justify-center text-slate-950 font-black text-xs drop-shadow-2xl">
+                  <span>R$ {activeCoinAnim.value}</span>
+                  <span className="text-[8px] opacity-80 leading-none">✡️</span>
+                </div>
+              </div>
+            )}
+
+            {/* Sparkle FX */}
+            {sparkleActive && (
+              <div className="absolute top-[8%] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex items-center justify-center">
+                <Sparkles className="w-12 h-12 text-yellow-300 animate-spin" />
+              </div>
+            )}
+
+            {/* Pushka Image with Jiggle */}
+            <div className={`w-full transform transition-transform ${pushkaJiggling ? 'animate-pushka-jiggle-physics' : ''}`}>
+              <img 
+                src="/assets/pushka_official.png" 
+                alt="Cofrinho Oficial Beit Chabad" 
+                className="w-full h-auto object-contain max-h-[260px] sm:max-h-[300px] drop-shadow-[0_15px_25px_rgba(0,0,0,0.7)] select-none pointer-events-none mx-auto"
+              />
+            </div>
+          </div>
+
+          {/* COIN SELECTION TRAY: Right under the Pushka */}
+          <div className="w-full mt-3 pt-3 border-t border-slate-800/80">
+            
+            <div className="flex items-center justify-between mb-2.5 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300 flex items-center">
+                <Coins className="w-3.5 h-3.5 mr-1 text-amber-400" />
+                Valor da Moeda:
+              </span>
+              <span className="text-xs text-amber-300 font-extrabold bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-400/30">
+                R$ {currentCoinValue}
+              </span>
+            </div>
+
+            {/* Preset Coins Grid */}
+            <div className="grid grid-cols-4 gap-2 mb-3">
+              {PRESET_COINS.map((c) => {
+                const isSelected = selectedCoin === c.value && !customAmount;
+                return (
+                  <button
+                    key={c.value}
+                    onClick={() => {
+                      setSelectedCoin(c.value);
+                      setCustomAmount('');
+                    }}
+                    className={`py-2 px-1 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center ${
+                      isSelected
+                        ? 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-300 text-slate-950 font-black shadow-md scale-105 gold-coin-glow'
+                        : 'bg-slate-800/90 hover:bg-slate-700/90 border-slate-700 text-slate-200 hover:border-amber-500/40'
+                    }`}
+                  >
+                    <span>{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Custom Amount + Main Deposit Button */}
+            <div className="flex items-center gap-2">
+              <div className="relative w-28 sm:w-32">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">R$</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder="Outro..."
+                  value={customAmount}
+                  onChange={(e) => setCustomAmount(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl pl-7 pr-2 py-2.5 text-xs sm:text-sm font-bold text-white outline-none"
                 />
               </div>
 
-            </div>
-
-          </div>
-
-          {/* RIGHT: Interactive Coin Selector & Deposit CTA */}
-          <div className="lg:col-span-6 space-y-6 w-full">
-            
-            {/* Header Badge */}
-            <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Mitzvá Diária de Tsedacá</span>
-            </div>
-
-            <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight">
-              Coloque sua moeda diária no cofrinho
-            </h2>
-
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Escolha uma quantia abaixo e clique em <strong>"Colocar no Cofrinho"</strong> para acumular sua doação. Você pode esvaziar e transferir o total via PIX quando desejar.
-            </p>
-
-            {/* Coin Tray Selection */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center">
-                  <Coins className="w-4 h-4 mr-1.5 text-amber-400" />
-                  <span>Escolha o valor da moeda:</span>
-                </label>
-                <span className="text-xs text-amber-400 font-bold bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
-                  Selecionado: R$ {currentCoinValue}
-                </span>
-              </div>
-
-              {/* Grid of Coins */}
-              <div className="grid grid-cols-4 gap-2.5 sm:gap-3 mb-5">
-                {PRESET_COINS.map((c) => {
-                  const isSelected = selectedCoin === c.value && !customAmount;
-                  return (
-                    <button
-                      key={c.value}
-                      onClick={() => {
-                        setSelectedCoin(c.value);
-                        setCustomAmount('');
-                      }}
-                      className={`relative p-2.5 sm:p-3 rounded-2xl border flex flex-col items-center justify-center transition-all ${
-                        isSelected
-                          ? 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-300 text-slate-950 font-black shadow-lg scale-105 gold-coin-glow'
-                          : 'bg-slate-800/80 hover:bg-slate-700/80 border-slate-700 text-slate-200 hover:border-amber-500/50'
-                      }`}
-                    >
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-current flex items-center justify-center font-bold text-xs mb-1">
-                        🪙
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold">{c.label}</span>
-                      <span className="text-[9px] opacity-75 truncate max-w-full">{c.desc}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Custom Value & Fast Deposit Button */}
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <div className="relative w-full sm:w-44">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">R$</span>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    placeholder="Outro valor..."
-                    value={customAmount}
-                    onChange={(e) => setCustomAmount(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-2xl pl-9 pr-3 py-3.5 text-sm font-bold text-white outline-none transition-colors"
-                  />
-                </div>
-
-                <button
-                  onClick={handleDropCoin}
-                  disabled={isDropping || currentCoinValue <= 0}
-                  className="w-full flex-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-gold hover:shadow-xl transition-all flex items-center justify-center space-x-2 text-sm sm:text-base disabled:opacity-50 cursor-pointer"
-                >
-                  <Coins className="w-5 h-5 text-slate-950 animate-bounce" />
-                  <span>{isDropping ? 'Colocando Moeda...' : `Colocar R$ ${currentCoinValue} no Cofrinho`}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Empty Pushka & Transfer PIX CTA */}
-            <div className="bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wide">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Transferência Segura</span>
-                </div>
-                <h4 className="font-serif text-lg font-bold text-white">
-                  Deseja esvaziar o cofrinho?
-                </h4>
-                <p className="text-xs text-slate-300 max-w-md">
-                  Envie o valor acumulado de <strong>R$ {pushkaState.balance.toFixed(2).replace('.', ',')}</strong> diretamente para o Beit Chabad Curitiba via PIX.
-                </p>
-              </div>
-
               <button
-                onClick={handleStartPixCheckout}
-                disabled={pushkaState.balance <= 0}
-                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-emerald-900/50 transition-all flex items-center justify-center space-x-2 text-sm shrink-0 disabled:opacity-40"
+                onClick={handleDropCoin}
+                disabled={isDropping || currentCoinValue <= 0}
+                className="flex-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black py-2.5 sm:py-3 px-4 rounded-xl shadow-gold hover:shadow-lg transition-all flex items-center justify-center space-x-2 text-xs sm:text-sm disabled:opacity-50 cursor-pointer"
               >
-                <span>Esvaziar via PIX</span>
-                <ArrowRight className="w-4 h-4" />
+                <Coins className="w-4 h-4 text-slate-950 animate-bounce" />
+                <span>{isDropping ? 'Colocando...' : `Colocar R$ ${currentCoinValue} no Cofrinho`}</span>
               </button>
             </div>
 
           </div>
 
+        </div>
+
+        {/* BOTTOM ACTION: Empty & Transfer via PIX */}
+        <div className="w-full max-w-lg mt-3 bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 rounded-2xl p-3.5 sm:p-4 shadow-lg flex items-center justify-between gap-3">
+          <div>
+            <div className="text-xs font-bold text-white flex items-center space-x-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Esvaziar Cofrinho (PIX)</span>
+            </div>
+            <div className="text-[11px] text-slate-300">
+              Acumulado: <strong className="text-amber-300 font-bold">R$ {pushkaState.balance.toFixed(2).replace('.', ',')}</strong>
+            </div>
+          </div>
+
+          <button
+            onClick={handleStartPixCheckout}
+            disabled={pushkaState.balance <= 0}
+            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md transition-all flex items-center space-x-1.5 disabled:opacity-40"
+          >
+            <span>Transferir PIX</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
       </main>
@@ -581,9 +548,9 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
       )}
 
       {/* Footer info banner */}
-      <footer className="w-full bg-slate-950 border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-400">
+      <footer className="w-full bg-slate-950 border-t border-slate-800/80 py-3 px-4 text-center text-xs text-slate-400">
         <p>
-          Beit Chabad do Paraná • 45 Anos de Amor e Alegria • Chave PIX: <strong className="text-slate-200">kitov@chabadcuritiba.com</strong>
+          Beit Chabad do Paraná • 45 Anos • Chave PIX: <strong className="text-slate-200">kitov@chabadcuritiba.com</strong>
         </p>
       </footer>
 

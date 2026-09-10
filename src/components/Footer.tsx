@@ -120,12 +120,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate, onOpen
                 </button>
               </li>
               <li>
-                <button onClick={() => onOpenPushka ? onOpenPushka() : handleNav('tzedaka')} className="hover:text-chabad-gold text-amber-400 font-medium transition-colors flex items-center gap-1.5">
-                  <Coins className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Cofrinho de Tsedacá (Pushka)</span>
-                </button>
-              </li>
-              <li>
                 <button onClick={onOpenDonate} className="text-chabad-gold hover:underline font-semibold flex items-center">
                   <Heart className="w-3.5 h-3.5 mr-1 fill-chabad-gold" /> Apoiar o Beit Chabad
                 </button>

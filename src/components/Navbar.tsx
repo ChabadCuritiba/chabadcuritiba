@@ -162,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                 Início
               </button>
 
-              {/* Institucional Dropdown */}
+              {/* Quem Somos Dropdown */}
               <div 
                 className="relative group"
                 onMouseEnter={() => setActiveDropdown('institucional')}
@@ -175,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                       : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
                   }`}
                 >
-                  <span>Institucional</span>
+                  <span>Quem Somos</span>
                   <ChevronDown className="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform" />
                 </button>
 
@@ -238,7 +238,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                       : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
                   }`}
                 >
-                  <span>Serviços & Comunidade</span>
+                  <span>Sinagoga & Serviços</span>
                   <ChevronDown className="w-4 h-4 text-slate-400 group-hover:rotate-180 transition-transform" />
                 </button>
 
@@ -439,10 +439,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
             </div>
 
             {/* Mobile Menu Toggle Button */}
-            <div className="flex xl:hidden items-center space-x-2">
+            <div className="flex xl:hidden items-center space-x-1.5">
+              <button 
+                onClick={() => onOpenPushka ? onOpenPushka() : handleNavClick('tzedaka')}
+                className="bg-amber-100/90 hover:bg-amber-200 text-amber-900 border border-amber-300/80 px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs transition-all"
+                title="Abrir Cofrinho de Tsedacá"
+              >
+                <Coins className="w-3.5 h-3.5 text-amber-700" />
+                <span>Cofrinho</span>
+              </button>
+
               <button 
                 onClick={onOpenDonate}
-                className="bg-chabad text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-sm"
+                className="bg-chabad text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
               >
                 <Heart className="w-3.5 h-3.5 text-chabad-gold" />
                 <span>Doar</span>
