@@ -76,7 +76,7 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
       } catch (e) {}
     }
 
-    // Pushka jiggle precisely as the coin slips into the slot
+    // Pushka jiggle as coin enters slot
     setTimeout(() => {
       setPushkaJiggling(true);
       setSparkleActive(true);
@@ -248,188 +248,163 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
         </div>
       </header>
 
-      {/* Main Spacious Stage */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-8 py-8 sm:py-12 flex-1 w-full flex flex-col justify-center items-center">
+      {/* Main Unified Center Column: Pushka on top, Selector directly underneath */}
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full flex flex-col justify-center items-center">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center w-full">
-
-          {/* LEFT: Official Pushka Canister with Straight Drop Animation */}
-          <div className="lg:col-span-6 flex flex-col items-center justify-center relative">
-            
-            {/* Ambient Gold Glow Aura */}
-            <div className="absolute w-80 sm:w-96 h-80 sm:h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse"></div>
-
-            {/* Streak & Live Balance Badges */}
-            <div className="w-full max-w-sm flex items-center justify-between gap-3 mb-4 px-2">
-              <div className="bg-slate-900/90 border border-amber-500/30 rounded-2xl px-4 py-2 flex items-center space-x-2.5 shadow-lg backdrop-blur-md">
-                <Flame className="w-5 h-5 text-amber-400 animate-bounce" />
-                <div>
-                  <div className="text-[10px] uppercase font-bold text-amber-400/80 leading-none">Sequência</div>
-                  <div className="text-sm font-bold text-white leading-tight">
-                    {pushkaState.currentStreak || 0} {(pushkaState.currentStreak || 0) === 1 ? 'Dia' : 'Dias'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-amber-600/30 to-amber-500/20 border border-amber-400/40 rounded-2xl px-4 py-2 flex items-center space-x-2.5 shadow-lg backdrop-blur-md">
-                <Coins className="w-5 h-5 text-amber-300" />
-                <div>
-                  <div className="text-[10px] uppercase font-bold text-amber-300 leading-none">Total no Cofrinho</div>
-                  <div className="text-base font-black text-amber-200 leading-tight">
-                    R$ {pushkaState.balance.toFixed(2).replace('.', ',')}
-                  </div>
-                </div>
+        {/* Top Badges (Streak & Total in Pushka) */}
+        <div className="w-full flex items-center justify-between gap-3 mb-4 px-1">
+          <div className="bg-slate-900/90 border border-amber-500/30 rounded-2xl px-4 py-2 flex items-center space-x-2.5 shadow-lg backdrop-blur-md">
+            <Flame className="w-5 h-5 text-amber-400 animate-bounce" />
+            <div>
+              <div className="text-[10px] uppercase font-bold text-amber-400/80 leading-none">Sequência</div>
+              <div className="text-sm font-bold text-white leading-tight">
+                {pushkaState.currentStreak || 0} {(pushkaState.currentStreak || 0) === 1 ? 'Dia' : 'Dias'}
               </div>
             </div>
-
-            {/* THE PUSHKA CANISTER CONTAINER */}
-            <div className="relative w-full max-w-xs sm:max-w-sm flex justify-center items-center py-2">
-              
-              {/* Active Falling Straight Coin right above the slot at 11.5% */}
-              {activeCoinAnim && (
-                <div 
-                  className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-straight-coin-drop"
-                  key={activeCoinAnim.id}
-                >
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full gold-coin-disc flex flex-col items-center justify-center text-slate-950 font-black text-xs sm:text-sm">
-                    <span className="leading-tight font-extrabold">R$ {activeCoinAnim.value}</span>
-                    <span className="text-[9px] opacity-80 leading-none font-normal">✡️</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Sparkle FX when coin lands inside */}
-              {sparkleActive && (
-                <div className="absolute top-[8%] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex items-center justify-center">
-                  <Sparkles className="w-14 h-14 text-yellow-300 animate-spin" />
-                </div>
-              )}
-
-              {/* Pushka Visual */}
-              <div 
-                className={`w-full flex items-center justify-center transform transition-transform select-none ${
-                  pushkaJiggling ? 'animate-pushka-jiggle-physics' : ''
-                }`}
-              >
-                <img 
-                  src="/assets/pushka_official.png" 
-                  alt="Cofrinho Oficial Beit Chabad" 
-                  className="w-full h-auto object-contain max-h-[380px] sm:max-h-[440px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] select-none pointer-events-none mx-auto"
-                />
-              </div>
-
-            </div>
-
           </div>
 
-          {/* RIGHT: Coin Amount Selector & Actions (Directly alongside the Pushka) */}
-          <div className="lg:col-span-6 space-y-5 w-full">
-            
-            <div className="space-y-1">
-              <div className="inline-flex items-center space-x-2 text-xs font-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Mitzvá Diária de Tsedacá</span>
+          <div className="bg-gradient-to-r from-amber-600/30 to-amber-500/20 border border-amber-400/40 rounded-2xl px-4 py-2 flex items-center space-x-2.5 shadow-lg backdrop-blur-md">
+            <Coins className="w-5 h-5 text-amber-300" />
+            <div>
+              <div className="text-[10px] uppercase font-bold text-amber-300 leading-none">Total no Cofrinho</div>
+              <div className="text-base font-black text-amber-200 leading-tight">
+                R$ {pushkaState.balance.toFixed(2).replace('.', ',')}
               </div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-white">
-                Escolha o valor da moeda
-              </h2>
-              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                Selecione o valor e clique em <strong>"Colocar no Cofrinho"</strong> para ver sua moeda entrar diretamente no cofrinho!
-              </p>
             </div>
+          </div>
+        </div>
 
-            {/* Coin Amount Tray Card */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl backdrop-blur-md">
-              <div className="flex items-center justify-between mb-4">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center">
-                  <Coins className="w-4 h-4 mr-1.5 text-amber-400" />
-                  <span>Moedas Rápidas:</span>
-                </label>
-                <span className="text-xs text-amber-300 font-black bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/30">
-                  Selecionado: R$ {currentCoinValue}
-                </span>
+        {/* CENTERED PUSHKA CANISTER */}
+        <div className="relative w-full max-w-sm flex justify-center items-center py-2 mb-2">
+          
+          {/* Ambient Gold Glow Aura */}
+          <div className="absolute w-72 sm:w-80 h-72 sm:h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse"></div>
+
+          {/* Active Falling Straight Coin calibrated right into the slot at 11.5% */}
+          {activeCoinAnim && (
+            <div 
+              className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-straight-coin-drop"
+              key={activeCoinAnim.id}
+            >
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full gold-coin-disc flex flex-col items-center justify-center text-slate-950 font-black text-xs sm:text-sm">
+                <span className="leading-tight font-extrabold">R$ {activeCoinAnim.value}</span>
+                <span className="text-[9px] opacity-80 leading-none font-normal">✡️</span>
               </div>
+            </div>
+          )}
 
-              {/* Grid of Coins */}
-              <div className="grid grid-cols-4 gap-2.5 sm:gap-3 mb-5">
-                {PRESET_COINS.map((c) => {
-                  const isSelected = selectedCoin === c.value && !customAmount;
-                  return (
-                    <button
-                      key={c.value}
-                      onClick={() => {
-                        setSelectedCoin(c.value);
-                        setCustomAmount('');
-                      }}
-                      className={`relative p-2.5 sm:p-3 rounded-2xl border flex flex-col items-center justify-center transition-all ${
-                        isSelected
-                          ? 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-300 text-slate-950 font-black shadow-lg scale-105 gold-coin-glow'
-                          : 'bg-slate-800/80 hover:bg-slate-700/80 border-slate-700 text-slate-200 hover:border-amber-500/50'
-                      }`}
-                    >
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-current flex items-center justify-center font-bold text-xs mb-1">
-                        🪙
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold">{c.label}</span>
-                      <span className="text-[9px] opacity-75 truncate max-w-full">{c.desc}</span>
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Sparkle FX */}
+          {sparkleActive && (
+            <div className="absolute top-[8%] left-1/2 -translate-x-1/2 z-30 pointer-events-none flex items-center justify-center">
+              <Sparkles className="w-14 h-14 text-yellow-300 animate-spin" />
+            </div>
+          )}
 
-              {/* Custom Value & Big Deposit Button */}
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <div className="relative w-full sm:w-44">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">R$</span>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    placeholder="Outro valor..."
-                    value={customAmount}
-                    onChange={(e) => setCustomAmount(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-2xl pl-9 pr-3 py-3.5 text-sm font-bold text-white outline-none transition-colors"
-                  />
-                </div>
+          {/* Pushka Visual */}
+          <div 
+            className={`w-full flex items-center justify-center transform transition-transform select-none ${
+              pushkaJiggling ? 'animate-pushka-jiggle-physics' : ''
+            }`}
+          >
+            <img 
+              src="/assets/pushka_official.png" 
+              alt="Cofrinho Oficial Beit Chabad" 
+              className="w-full h-auto object-contain max-h-[320px] sm:max-h-[360px] drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)] select-none pointer-events-none mx-auto"
+            />
+          </div>
 
+        </div>
+
+        {/* COIN AMOUNT SELECTOR: Placed directly under the Pushka so it's super close to the animation */}
+        <div className="w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl backdrop-blur-md space-y-4">
+          
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center">
+              <Coins className="w-4 h-4 mr-1.5 text-amber-400" />
+              <span>Escolha o valor da moeda:</span>
+            </label>
+            <span className="text-xs text-amber-300 font-black bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/30">
+              Selecionado: R$ {currentCoinValue}
+            </span>
+          </div>
+
+          {/* Grid of Coins */}
+          <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
+            {PRESET_COINS.map((c) => {
+              const isSelected = selectedCoin === c.value && !customAmount;
+              return (
                 <button
-                  onClick={handleDropCoin}
-                  disabled={isDropping || currentCoinValue <= 0}
-                  className="w-full flex-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-gold hover:shadow-xl transition-all flex items-center justify-center space-x-2 text-sm sm:text-base disabled:opacity-50 cursor-pointer"
+                  key={c.value}
+                  onClick={() => {
+                    setSelectedCoin(c.value);
+                    setCustomAmount('');
+                  }}
+                  className={`relative p-2.5 sm:p-3 rounded-2xl border flex flex-col items-center justify-center transition-all ${
+                    isSelected
+                      ? 'bg-gradient-to-br from-amber-500 to-yellow-600 border-amber-300 text-slate-950 font-black shadow-lg scale-105 gold-coin-glow'
+                      : 'bg-slate-800/80 hover:bg-slate-700/80 border-slate-700 text-slate-200 hover:border-amber-500/50'
+                  }`}
                 >
-                  <Coins className="w-5 h-5 text-slate-950 animate-bounce" />
-                  <span>{isDropping ? 'Colocando Moeda...' : `Colocar R$ ${currentCoinValue} no Cofrinho`}</span>
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-current flex items-center justify-center font-bold text-xs mb-1">
+                    🪙
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold">{c.label}</span>
+                  <span className="text-[9px] opacity-75 truncate max-w-full">{c.desc}</span>
                 </button>
-              </div>
-            </div>
-
-            {/* Empty Pushka (Transfer via PIX) Card */}
-            <div className="bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wide">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Transferência Segura</span>
-                </div>
-                <h4 className="font-serif text-lg font-bold text-white">
-                  Deseja esvaziar o cofrinho?
-                </h4>
-                <p className="text-xs text-slate-300 max-w-md">
-                  Envie o valor acumulado de <strong>R$ {pushkaState.balance.toFixed(2).replace('.', ',')}</strong> diretamente para o Beit Chabad Curitiba via PIX.
-                </p>
-              </div>
-
-              <button
-                onClick={handleStartPixCheckout}
-                disabled={pushkaState.balance <= 0}
-                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-emerald-900/50 transition-all flex items-center justify-center space-x-2 text-sm shrink-0 disabled:opacity-40"
-              >
-                <span>Esvaziar via PIX</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-
+              );
+            })}
           </div>
 
+          {/* Custom Value Input & Main Deposit Button */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+            <div className="relative w-full sm:w-44">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">R$</span>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Outro valor..."
+                value={customAmount}
+                onChange={(e) => setCustomAmount(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-2xl pl-9 pr-3 py-3.5 text-sm font-bold text-white outline-none transition-colors"
+              />
+            </div>
+
+            <button
+              onClick={handleDropCoin}
+              disabled={isDropping || currentCoinValue <= 0}
+              className="w-full flex-1 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-gold hover:shadow-xl transition-all flex items-center justify-center space-x-2 text-sm sm:text-base disabled:opacity-50 cursor-pointer"
+            >
+              <Coins className="w-5 h-5 text-slate-950 animate-bounce" />
+              <span>{isDropping ? 'Colocando Moeda...' : `Colocar R$ ${currentCoinValue} no Cofrinho`}</span>
+            </button>
+          </div>
+
+        </div>
+
+        {/* EMPTY PUSHKA (TRANSFER VIA PIX) CARD: Directly underneath */}
+        <div className="w-full mt-4 bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 rounded-3xl p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="space-y-1 text-center sm:text-left">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wide">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Transferência Segura</span>
+            </div>
+            <h4 className="font-serif text-base sm:text-lg font-bold text-white">
+              Deseja esvaziar o cofrinho?
+            </h4>
+            <p className="text-xs text-slate-300">
+              Envie o acumulado de <strong className="text-amber-300 font-bold">R$ {pushkaState.balance.toFixed(2).replace('.', ',')}</strong> via PIX para o Beit Chabad.
+            </p>
+          </div>
+
+          <button
+            onClick={handleStartPixCheckout}
+            disabled={pushkaState.balance <= 0}
+            className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-3 rounded-2xl shadow-lg hover:shadow-emerald-900/50 transition-all flex items-center justify-center space-x-2 text-sm shrink-0 disabled:opacity-40"
+          >
+            <span>Esvaziar via PIX</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
 
       </main>
