@@ -1,15 +1,14 @@
 import { 
   Heart, Phone, MapPin, Mail, Flame, 
-  ArrowUp, ShieldCheck, Clock, ExternalLink, Coins 
+  ArrowUp, ShieldCheck, Clock, ExternalLink 
 } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
   onOpenDonate: () => void;
-  onOpenPushka?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate, onOpenPushka }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDonate }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

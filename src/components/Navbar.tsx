@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Calendar, Clock, Heart, Phone, MapPin, 
   BookOpen, Sparkles, ChevronDown, Award, Users, 
-  UtensilsCrossed, ShieldCheck, Home, Flame, Search, Bell,
-  Coins
+  UtensilsCrossed, ShieldCheck, Home, Flame, Search, Bell
 } from 'lucide-react';
 import { getCuritibaShabbatTimes, fetchLiveCuritibaShabbatTimes } from '../utils/shabbatTimes';
 import { 
@@ -16,10 +15,9 @@ interface NavbarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
   onOpenDonate: () => void;
-  onOpenPushka?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenDonate, onOpenPushka }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenDonate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -439,16 +437,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
             </div>
 
             {/* Mobile Menu Toggle Button */}
-            <div className="flex xl:hidden items-center space-x-1.5">
-              <button 
-                onClick={() => onOpenPushka ? onOpenPushka() : handleNavClick('tzedaka')}
-                className="bg-amber-100/90 hover:bg-amber-200 text-amber-900 border border-amber-300/80 px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-xs transition-all"
-                title="Abrir Cofrinho de Tsedacá"
-              >
-                <Coins className="w-3.5 h-3.5 text-amber-700" />
-                <span>Cofrinho</span>
-              </button>
-
+            <div className="flex xl:hidden items-center space-x-2">
               <button 
                 onClick={onOpenDonate}
                 className="bg-chabad text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
@@ -482,20 +471,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                 className="w-full p-2.5 rounded-lg text-left text-sm font-semibold bg-slate-50 text-slate-800 hover:bg-chabad-light hover:text-chabad flex items-center"
               >
                 <Home className="w-4 h-4 mr-2 text-chabad" /> Início
-              </button>
-
-              <button 
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  if (onOpenPushka) onOpenPushka();
-                  else handleNavClick('tzedaka');
-                }}
-                className="w-full p-2.5 rounded-lg text-left text-sm font-bold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100 flex items-center justify-between"
-              >
-                <span className="flex items-center">
-                  <Coins className="w-4 h-4 mr-2 text-amber-600" /> Tsedacá Diária (Cofrinho)
-                </span>
-                <span className="text-[10px] bg-amber-200/80 px-2 py-0.5 rounded-full font-bold text-amber-800">Interativo 🪙</span>
               </button>
             </div>
 

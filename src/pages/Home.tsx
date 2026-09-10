@@ -3,7 +3,7 @@ import {
   Flame, Heart, BookOpen, Users, Sparkles, 
   MapPin, Phone, ArrowRight, ShieldCheck, Award, 
   Droplets, UtensilsCrossed, ChevronRight, CheckCircle2,
-  ExternalLink, GraduationCap, Coins
+  ExternalLink, GraduationCap
 } from 'lucide-react';
 import { ShabbatWidget } from '../components/ShabbatWidget';
 import { MITZVAH_CAMPAIGNS, MAGAZINES } from '../data/mockData';
@@ -14,14 +14,12 @@ interface HomeProps {
   onSelectEvent?: (event: CommunityEvent) => void;
   onOpenDonate: () => void;
   onOpenOhel: () => void;
-  onOpenPushka?: () => void;
 }
 
 export const Home: React.FC<HomeProps> = ({ 
   onNavigate, 
   onOpenDonate, 
-  onOpenOhel,
-  onOpenPushka 
+  onOpenOhel 
 }) => {
   const coreMitzvot = MITZVAH_CAMPAIGNS.slice(0, 4);
 
