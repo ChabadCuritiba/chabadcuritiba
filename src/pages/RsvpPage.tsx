@@ -480,7 +480,7 @@ export const RsvpPage: React.FC<RsvpPageProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Left Column: Event Summary Card */}
-          <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200 shadow-luxury overflow-hidden sticky top-24">
+          <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200 shadow-luxury overflow-hidden lg:sticky lg:top-24">
             <div className="relative h-48 overflow-hidden bg-slate-100">
               <img 
                 src={currentEvent.image || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1000'} 

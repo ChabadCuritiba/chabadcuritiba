@@ -92,7 +92,7 @@ export const MitzvotCampaigns: React.FC<MitzvotCampaignsProps> = ({ onNavigate, 
 
           {/* Right Detail Pane */}
           <div className="lg:col-span-8">
-            <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-luxury space-y-8 sticky top-28">
+            <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-luxury space-y-8 lg:sticky lg:top-28">
               
               {/* Header of selected mitzvah */}
               <div className="border-b border-slate-100 pb-6">
