@@ -155,27 +155,27 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
         @keyframes straightCoinDrop {
           0% {
             opacity: 0;
-            transform: translate(-50%, -180px) scale(1.1) rotate(0deg);
+            transform: translate(-50%, -220px) scale(1.2) rotate(0deg);
           }
           15% {
             opacity: 1;
-            transform: translate(-50%, -140px) scale(1.05) rotate(0deg);
+            transform: translate(-50%, -160px) scale(1.15) rotate(0deg);
           }
           55% {
             opacity: 1;
-            transform: translate(-50%, -40px) scale(0.95) rotate(0deg);
+            transform: translate(-50%, -45px) scale(1) rotate(0deg);
           }
           85% {
             opacity: 1;
             transform: translate(-50%, 0px) scale(0.65) rotate(0deg);
           }
           95% {
-            opacity: 0.8;
-            transform: translate(-50%, 14px) scale(0.35) rotate(0deg);
+            opacity: 0.85;
+            transform: translate(-50%, 16px) scale(0.3) rotate(0deg);
           }
           100% {
             opacity: 0;
-            transform: translate(-50%, 25px) scale(0.1) rotate(0deg);
+            transform: translate(-50%, 28px) scale(0.08) rotate(0deg);
           }
         }
 
@@ -196,10 +196,10 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
           animation: pushkaRattlePhysics 0.4s ease-in-out;
         }
 
-        .gold-coin-disc {
-          background: radial-gradient(circle at 35% 30%, #fff7b2 0%, #facc15 35%, #eab308 65%, #ca8a04 85%, #854d0e 100%);
-          border: 2.5px solid #fef08a;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 25px rgba(234, 179, 8, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.9), inset 0 -2px 4px rgba(113, 63, 18, 0.8);
+        .silver-coin-disc {
+          background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f8fafc 20%, #e2e8f0 45%, #cbd5e1 70%, #94a3b8 88%, #64748b 100%);
+          border: 3px solid #f8fafc;
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 255, 255, 0.8), inset 0 3px 6px rgba(255, 255, 255, 1), inset 0 -3px 6px rgba(51, 65, 85, 0.9);
         }
 
         .gold-coin-glow {
@@ -286,9 +286,9 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
               className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-straight-coin-drop"
               key={activeCoinAnim.id}
             >
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full gold-coin-disc flex flex-col items-center justify-center text-slate-950 font-black text-xs sm:text-sm">
-                <span className="leading-tight font-extrabold">R$ {activeCoinAnim.value}</span>
-                <span className="text-[9px] opacity-80 leading-none font-normal">✡️</span>
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full silver-coin-disc flex flex-col items-center justify-center text-slate-900 font-black text-sm sm:text-base shadow-2xl">
+                <span className="leading-tight font-black tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">R$ {activeCoinAnim.value}</span>
+                <span className="text-xs sm:text-sm leading-none font-bold mt-0.5 opacity-90">✡️</span>
               </div>
             </div>
           )}
