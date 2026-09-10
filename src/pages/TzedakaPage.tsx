@@ -303,20 +303,19 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
           {/* Active Falling Straight Coin calibrated right into the slot at 11.5% */}
           {activeCoinAnim && (
             <div 
-              className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-straight-coin-drop"
+              className="absolute z-30 top-[11.5%] left-1/2 -translate-x-1/2 pointer-events-none animate-straight-coin-drop flex flex-col items-center justify-center"
               key={activeCoinAnim.id}
             >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full silver-coin-disc p-1.5 flex items-center justify-center relative select-none shadow-2xl">
-                {/* Concentric engraved milled ring */}
-                <div className="w-full h-full rounded-full silver-coin-inner flex flex-col items-center justify-center relative bg-gradient-to-b from-white/40 via-slate-200/20 to-slate-400/40">
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 silver-coin-text">
-                    צדקה
-                  </span>
-                  <span className="leading-none font-black text-sm sm:text-base tracking-tighter silver-coin-text">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)]">
+                <img 
+                  src="/assets/coin.png" 
+                  alt="Moeda" 
+                  className="w-full h-full object-contain pointer-events-none select-none"
+                />
+                {/* Denomination badge overlay */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="bg-slate-950/80 border border-amber-400/80 backdrop-blur-sm rounded-full px-2 py-0.5 text-[11px] sm:text-xs font-black text-amber-300 shadow-lg leading-tight">
                     R$ {activeCoinAnim.value}
-                  </span>
-                  <span className="text-[10px] sm:text-xs leading-none font-bold mt-0.5 silver-coin-text opacity-90">
-                    ✡️
                   </span>
                 </div>
               </div>
@@ -375,9 +374,11 @@ export const TzedakaPage: React.FC<TzedakaPageProps> = ({ onNavigate }) => {
                       : 'bg-slate-800/80 hover:bg-slate-700/80 border-slate-700 text-slate-200 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-current flex items-center justify-center font-bold text-xs mb-1">
-                    🪙
-                  </div>
+                  <img 
+                    src="/assets/coin.png" 
+                    alt="Moeda" 
+                    className="w-7 h-7 sm:w-8 sm:h-8 object-contain mb-1 drop-shadow"
+                  />
                   <span className="text-xs sm:text-sm font-bold">{c.label}</span>
                   <span className="text-[9px] opacity-75 truncate max-w-full">{c.desc}</span>
                 </button>
