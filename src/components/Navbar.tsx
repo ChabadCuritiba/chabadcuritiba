@@ -296,18 +296,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                 )}
               </div>
 
-              {/* Eventos Link */}
-              <button 
-                onClick={() => handleNavClick('eventos')}
-                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  currentPage === 'eventos' || currentPage === 'rsvp'
-                    ? 'text-chabad bg-chabad-light/60 font-bold' 
-                    : 'text-slate-700 hover:text-chabad hover:bg-slate-50'
-                }`}
-              >
-                Eventos & RSVP
-              </button>
-
               {/* Educação & Juventude */}
               <div 
                 className="relative group"
