@@ -51,8 +51,26 @@ export const App: React.FC = () => {
     fetchRemoteRsvps().catch(() => {});
     fetchRemoteDonations().catch(() => {});
 
+    const checkRedirect = (target: string) => {
+      const clean = target.toLowerCase().replace(/^[#/]+/, '');
+      if (clean === 'velas') {
+        window.location.href = 'https://pt.chabad.org/library/article_cdo/aid/657796/jewish/As-Velas-de-Shabat.htm';
+        return true;
+      }
+      if (clean === 'festas') {
+        window.location.href = 'https://pt.chabad.org/holidays/JewishNewYear/template_cdo/aid/3756528/jewish/As-Grandes-Festas.htm';
+        return true;
+      }
+      return false;
+    };
+
+    if (checkRedirect(window.location.hash) || checkRedirect(window.location.pathname)) {
+      return;
+    }
+
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
+      if (checkRedirect(hash)) return;
       if (hash) setCurrentPage(hash);
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -60,6 +78,14 @@ export const App: React.FC = () => {
   }, []);
 
   const handleNavigate = (page: string) => {
+    if (page === 'velas') {
+      window.location.href = 'https://pt.chabad.org/library/article_cdo/aid/657796/jewish/As-Velas-de-Shabat.htm';
+      return;
+    }
+    if (page === 'festas') {
+      window.location.href = 'https://pt.chabad.org/holidays/JewishNewYear/template_cdo/aid/3756528/jewish/As-Grandes-Festas.htm';
+      return;
+    }
     setCurrentPage(page);
     window.location.hash = page === 'home' ? '' : page;
     window.scrollTo({ top: 0, behavior: 'smooth' });

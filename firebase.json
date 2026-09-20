@@ -5,6 +5,28 @@
       "firebase.json",
       "**/node_modules/**"
     ],
+    "redirects": [
+      {
+        "source": "/velas",
+        "destination": "https://pt.chabad.org/library/article_cdo/aid/657796/jewish/As-Velas-de-Shabat.htm",
+        "type": 301
+      },
+      {
+        "source": "/velas/**",
+        "destination": "https://pt.chabad.org/library/article_cdo/aid/657796/jewish/As-Velas-de-Shabat.htm",
+        "type": 301
+      },
+      {
+        "source": "/festas",
+        "destination": "https://pt.chabad.org/holidays/JewishNewYear/template_cdo/aid/3756528/jewish/As-Grandes-Festas.htm",
+        "type": 301
+      },
+      {
+        "source": "/festas/**",
+        "destination": "https://pt.chabad.org/holidays/JewishNewYear/template_cdo/aid/3756528/jewish/As-Grandes-Festas.htm",
+        "type": 301
+      }
+    ],
     "headers": [
       {
         "source": "/manifest.json",
