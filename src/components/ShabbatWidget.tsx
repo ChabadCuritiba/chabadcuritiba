@@ -126,7 +126,7 @@ export const ShabbatWidget: React.FC<ShabbatWidgetProps> = ({ onLearnMore }) => 
             <div className="text-xs text-emerald-200 flex items-center justify-between pt-2">
               <span>{times.nextShabbatDate}</span>
               <a
-                href="https://www.chabad.org/calendar/zmanim_cdo/locationid/34568/locationtype/1/city/Curitiba/country/Brazil/jewish/Zmanim.htm"
+                href={`https://www.chabad.org/calendar/zmanim_cdo/locationid/941/locationtype/1/save/1/tdate/${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getFullYear()}/jewish/Zmanim.htm`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white hover:text-chabad-gold font-medium flex items-center text-xs underline"

@@ -101,7 +101,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
           <div className="flex items-center space-x-3 text-slate-200">
             <span className="flex items-center text-chabad-gold font-semibold tracking-wide">
               <Flame className="w-3.5 h-3.5 mr-1 text-chabad-gold animate-pulse" />
-              {shabbatTimes.parashaName.toLowerCase().includes('sucot') ? 'Shabat & Sucot em Curitiba:' : 'Shabat em Curitiba:'}
+              {shabbatTimes.parashaName.toLowerCase().includes('sucot')
+                ? 'Shabat & Sucot em Curitiba:'
+                : (shabbatTimes.parashaName.toLowerCase().includes('rosh') ||
+                   shabbatTimes.parashaName.toLowerCase().includes('kipur') ||
+                   shabbatTimes.parashaName.toLowerCase().includes('pêssach') ||
+                   shabbatTimes.parashaName.toLowerCase().includes('shavuot'))
+                ? `${shabbatTimes.parashaName} em Curitiba:`
+                : 'Shabat em Curitiba:'}
             </span>
             <span className="hidden sm:inline text-slate-300">
               Velas: <strong className="text-white font-bold">{shabbatTimes.candleLighting}</strong>

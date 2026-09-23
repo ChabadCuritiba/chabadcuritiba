@@ -9,7 +9,7 @@ export interface CuritibaScheduleEntry {
   candleIso?: string;
 }
 
-const LIVE_CACHE_KEY = 'chabad_curitiba_live_shabbat_v1';
+const LIVE_CACHE_KEY = 'chabad_curitiba_live_shabbat_v2';
 
 // Hebrew months translation to Portuguese
 function formatHebrewDatePt(hdateStr: string): string {
@@ -37,9 +37,9 @@ function formatHolidayTitlePt(title: string): string {
   if (!title) return '';
   return title
     .replace(/^Parashat\s+/i, '')
-    .replace(/Erev Sukkot/i, 'Sucot (Sukkos)')
-    .replace(/Sukkot I{1,2}/i, 'Sucot (Sukkos)')
-    .replace(/Sukkot/i, 'Sucot (Sukkos)')
+    .replace(/Erev Sukkot/i, 'Sucot')
+    .replace(/Sukkot I{1,2}/i, 'Sucot')
+    .replace(/Sukkot/i, 'Sucot')
     .replace(/Erev Yom Kippur/i, 'Iom Kipur')
     .replace(/Yom Kippur/i, 'Iom Kipur')
     .replace(/Erev Rosh Hashana/i, 'Rosh Hashaná')
