@@ -32,6 +32,7 @@ import { AdminPanel } from './pages/AdminPanel';
 
 import { CommunityEvent } from './types';
 import { fetchRemoteEvents, fetchRemoteRsvps, fetchRemoteDonations } from './utils/cloudSync';
+import { trackPageView, initAnalytics } from './utils/analytics';
 
 export const App: React.FC = () => {
   // Sync state with URL hash for easy navigation and bookmarking
@@ -46,6 +47,9 @@ export const App: React.FC = () => {
   const [ohelModalOpen, setOhelModalOpen] = useState(false);
 
   useEffect(() => {
+    initAnalytics().catch(() => {});
+    trackPageView(currentPage);
+
     // Background cloud sync for all devices & incognito
     fetchRemoteEvents().catch(() => {});
     fetchRemoteRsvps().catch(() => {});
@@ -71,7 +75,10 @@ export const App: React.FC = () => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (checkRedirect(hash)) return;
-      if (hash) setCurrentPage(hash);
+      if (hash) {
+        setCurrentPage(hash);
+        trackPageView(hash);
+      }
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -87,6 +94,7 @@ export const App: React.FC = () => {
       return;
     }
     setCurrentPage(page);
+    trackPageView(page);
     window.location.hash = page === 'home' ? '' : page;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
