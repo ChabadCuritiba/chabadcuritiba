@@ -16,10 +16,21 @@ export const ShabbatWidget: React.FC<ShabbatWidgetProps> = ({ onLearnMore }) => 
       setTimes(liveTimes);
     });
 
+    const handleShabbatUpdate = (e: any) => {
+      if (e.detail) {
+        setTimes(getCuritibaShabbatTimes(e.detail));
+      }
+    };
+    window.addEventListener('chabad_shabbat_updated', handleShabbatUpdate);
+
     const timer = setInterval(() => {
-      setTimes(getCuritibaShabbatTimes());
+      setTimes(prev => getCuritibaShabbatTimes(undefined, prev));
     }, 1000);
-    return () => clearInterval(timer);
+
+    return () => {
+      window.removeEventListener('chabad_shabbat_updated', handleShabbatUpdate);
+      clearInterval(timer);
+    };
   }, []);
 
   const handleCopyTimes = () => {

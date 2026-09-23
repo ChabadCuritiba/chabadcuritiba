@@ -28,11 +28,21 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
       setShabbatTimes(liveTimes);
     });
 
+    const handleShabbatUpdate = (e: any) => {
+      if (e.detail) {
+        setShabbatTimes(getCuritibaShabbatTimes(e.detail));
+      }
+    };
+    window.addEventListener('chabad_shabbat_updated', handleShabbatUpdate);
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('chabad_shabbat_updated', handleShabbatUpdate);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const handleNavClick = (page: string) => {

@@ -1,12 +1,15 @@
 import { ShabbatTimesInfo } from '../types';
 
-interface CuritibaScheduleEntry {
+export interface CuritibaScheduleEntry {
   parashaName: string;
   candleLighting: string;
   havdalah: string;
   hebrewDate: string;
   shabbatDatePt: string;
+  candleIso?: string;
 }
+
+const LIVE_CACHE_KEY = 'chabad_curitiba_live_shabbat_v1';
 
 // Hebrew months translation to Portuguese
 function formatHebrewDatePt(hdateStr: string): string {
@@ -28,6 +31,23 @@ function formatHebrewDatePt(hdateStr: string): string {
     .replace('Tamuz', 'de Tamuz de')
     .replace('Av', 'de Menachem Av de')
     .replace('Elul', 'de Elul de');
+}
+
+function formatHolidayTitlePt(title: string): string {
+  if (!title) return '';
+  return title
+    .replace(/^Parashat\s+/i, '')
+    .replace(/Yom Kippur/i, 'Iom Kipur')
+    .replace(/Erev Rosh Hashana/i, 'Erev Rosh Hashaná')
+    .replace(/Rosh Hashana/i, 'Rosh Hashaná')
+    .replace(/Erev Sukkot/i, 'Erev Sucot')
+    .replace(/Sukkot/i, 'Sucot')
+    .replace(/Shemini Atzeret/i, 'Shemini Atseret')
+    .replace(/Simchat Torah/i, 'Simchat Torá')
+    .replace(/Chanukah|Hanukkah/i, 'Chanucá')
+    .replace(/Purim/i, 'Purim')
+    .replace(/Pesach|Passover/i, 'Pêssach')
+    .replace(/Shavuot/i, 'Shavuot');
 }
 
 /**
@@ -54,39 +74,32 @@ function formatShabbatDatePt(isoStr: string): string {
   return '';
 }
 
-// Official Beit Chabad do Paraná verified luach calibration
-const CURITIBA_OFFICIAL_SCHEDULE: Record<string, CuritibaScheduleEntry> = {
-  '2026-09-11': {
-    parashaName: 'Erev Rosh Hashaná 5787',
-    candleLighting: '17:49',
-    havdalah: '18:44',
-    hebrewDate: '29 de Elul de 5786',
-    shabbatDatePt: '11 de setembro de 2026',
-  },
-  '2026-09-18': {
-    parashaName: "Parashat Ha'Azinu • Shabat Shuvá",
-    candleLighting: '17:52',
-    havdalah: '18:46',
-    hebrewDate: '7 de Tishrei de 5787',
-    shabbatDatePt: '18 de setembro de 2026',
-  },
-  '2026-09-25': {
-    parashaName: 'Erev Sucot 5787',
-    candleLighting: '17:55',
-    havdalah: '18:49',
-    hebrewDate: '14 de Tishrei de 5787',
-    shabbatDatePt: '25 de setembro de 2026',
-  }
-};
+// Module-level cached schedule
+let inMemoryCachedSchedule: CuritibaScheduleEntry | null = null;
 
-// Fallback defaults (Erev Rosh Hashaná 5787)
-const CURRENT_CURITIBA_TIMES: CuritibaScheduleEntry = {
-  parashaName: 'Erev Rosh Hashaná 5787',
-  candleLighting: '17:49',
-  havdalah: '18:44',
-  hebrewDate: '29 de Elul de 5786',
-  shabbatDatePt: '11 de setembro de 2026',
-};
+function getStoredSchedule(): CuritibaScheduleEntry | null {
+  if (inMemoryCachedSchedule) return inMemoryCachedSchedule;
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(LIVE_CACHE_KEY);
+      if (raw) {
+        inMemoryCachedSchedule = JSON.parse(raw);
+        return inMemoryCachedSchedule;
+      }
+    } catch (e) {}
+  }
+  return null;
+}
+
+function saveStoredSchedule(entry: CuritibaScheduleEntry): void {
+  inMemoryCachedSchedule = entry;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(LIVE_CACHE_KEY, JSON.stringify(entry));
+      window.dispatchEvent(new CustomEvent('chabad_shabbat_updated', { detail: entry }));
+    } catch (e) {}
+  }
+}
 
 export async function fetchLiveCuritibaShabbatTimes(): Promise<ShabbatTimesInfo> {
   try {
@@ -104,10 +117,10 @@ export async function fetchLiveCuritibaShabbatTimes(): Promise<ShabbatTimesInfo>
       if (data.items && Array.isArray(data.items)) {
         for (const item of data.items) {
           if (item.category === 'parashat') {
-            parasha = item.title ? item.title.replace(/^Parashat\s+/i, '') : '';
+            parasha = formatHolidayTitlePt(item.title || '');
             if (item.hdate) hebrewDateStr = formatHebrewDatePt(item.hdate);
           } else if (item.category === 'holiday' && !parasha) {
-            parasha = item.title;
+            parasha = formatHolidayTitlePt(item.title || '');
             if (item.hdate) hebrewDateStr = formatHebrewDatePt(item.hdate);
           } else if (item.category === 'candles') {
             candleIso = item.date;
@@ -119,23 +132,18 @@ export async function fetchLiveCuritibaShabbatTimes(): Promise<ShabbatTimesInfo>
         }
       }
 
-      // Check if this date has a community calibrated entry
-      if (candleIso) {
-        const dateKey = candleIso.substring(0, 10);
-        if (CURITIBA_OFFICIAL_SCHEDULE[dateKey]) {
-          return getCuritibaShabbatTimes(CURITIBA_OFFICIAL_SCHEDULE[dateKey]);
-        }
-      }
-
-      // Otherwise dynamically use Hebcal calculated astronomical times for Curitiba
       if (candleLightingStr && havdalahStr) {
-        return getCuritibaShabbatTimes({
+        const liveEntry: CuritibaScheduleEntry = {
           parashaName: parasha || 'Shabat Kodesh',
           candleLighting: candleLightingStr,
           havdalah: havdalahStr,
           hebrewDate: hebrewDateStr || '',
           shabbatDatePt: candleIso ? formatShabbatDatePt(candleIso) : '',
-        });
+          candleIso: candleIso || undefined
+        };
+
+        saveStoredSchedule(liveEntry);
+        return getCuritibaShabbatTimes(liveEntry);
       }
     }
   } catch (err) {
@@ -145,28 +153,39 @@ export async function fetchLiveCuritibaShabbatTimes(): Promise<ShabbatTimesInfo>
   return getCuritibaShabbatTimes();
 }
 
-export function getCuritibaShabbatTimes(override?: CuritibaScheduleEntry): ShabbatTimesInfo {
-  const schedule = override || CURRENT_CURITIBA_TIMES;
+export function getCuritibaShabbatTimes(
+  override?: CuritibaScheduleEntry,
+  existingState?: ShabbatTimesInfo
+): ShabbatTimesInfo {
+  const schedule = override || getStoredSchedule() || {
+    parashaName: 'Shabat Kodesh',
+    candleLighting: '18:00',
+    havdalah: '18:55',
+    hebrewDate: '',
+    shabbatDatePt: ''
+  };
+
   const now = new Date();
   
-  // Find upcoming Friday
-  const current = new Date();
-  const dayOfWeek = current.getDay(); // 0 is Sunday, 5 is Friday, 6 is Saturday
-  let daysUntilFriday = (5 - dayOfWeek + 7) % 7;
-  if (dayOfWeek === 6) daysUntilFriday = 6;
-  
-  const fridayDate = new Date(current);
-  fridayDate.setDate(current.getDate() + (dayOfWeek === 5 ? 0 : daysUntilFriday));
-
-  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-  const fallbackDateStr = fridayDate.toLocaleDateString('pt-BR', options);
-
-  const [cHours, cMinutes] = (schedule.candleLighting || '17:49').split(':').map(Number);
-  let candleTarget = new Date(fridayDate);
-  candleTarget.setHours(cHours || 17, cMinutes || 49, 0, 0);
+  // Compute candle target date
+  let candleTarget: Date;
+  if (schedule.candleIso) {
+    candleTarget = new Date(schedule.candleIso);
+  } else {
+    // Upcoming Friday
+    const dayOfWeek = now.getDay();
+    let daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+    if (dayOfWeek === 6) daysUntilFriday = 6;
+    
+    candleTarget = new Date(now);
+    candleTarget.setDate(now.getDate() + (dayOfWeek === 5 ? 0 : daysUntilFriday));
+    const [cHours, cMinutes] = (schedule.candleLighting || '18:00').split(':').map(Number);
+    candleTarget.setHours(cHours || 18, cMinutes || 0, 0, 0);
+  }
 
   let diffMs = candleTarget.getTime() - now.getTime();
-  if (diffMs < 0) {
+  if (diffMs < 0 && Math.abs(diffMs) > 28 * 3600 * 1000) {
+    // If target has passed by more than 28 hours, target next week
     candleTarget = new Date(candleTarget.getTime() + 7 * 24 * 60 * 60 * 1000);
     diffMs = candleTarget.getTime() - now.getTime();
   }
@@ -177,14 +196,17 @@ export function getCuritibaShabbatTimes(override?: CuritibaScheduleEntry): Shabb
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
+  const [cHours] = (schedule.candleLighting || '18:00').split(':').map(Number);
+  const isShabbatNow = (now.getDay() === 5 && now.getHours() >= (cHours || 18)) || now.getDay() === 6;
+
   return {
     location: 'Curitiba, PR',
-    parashaName: schedule.parashaName,
-    hebrewDate: schedule.hebrewDate,
-    candleLighting: schedule.candleLighting,
-    havdalah: schedule.havdalah,
-    nextShabbatDate: schedule.shabbatDatePt || fallbackDateStr,
-    isShabbatNow: dayOfWeek === 5 && now.getHours() >= (cHours || 17),
+    parashaName: schedule.parashaName || existingState?.parashaName || 'Shabat Kodesh',
+    hebrewDate: schedule.hebrewDate || existingState?.hebrewDate || '',
+    candleLighting: schedule.candleLighting || existingState?.candleLighting || '18:00',
+    havdalah: schedule.havdalah || existingState?.havdalah || '18:55',
+    nextShabbatDate: schedule.shabbatDatePt || existingState?.nextShabbatDate || '',
+    isShabbatNow,
     candlesCountdown: { days, hours, minutes, seconds },
   };
 }
