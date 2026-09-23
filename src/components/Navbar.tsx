@@ -275,7 +275,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate, onOpenD
                     >
                       <Sparkles className="w-4 h-4 mr-2.5 text-chabad" />
                       <div>
-                        <div className="font-medium">Mikvê Mei Menachem</div>
+                        <div className="font-medium">Mikvê</div>
                         <div className="text-xs text-slate-500">Pureza familiar e agendamentos</div>
                       </div>
                     </button>
