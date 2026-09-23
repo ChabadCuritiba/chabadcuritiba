@@ -168,7 +168,7 @@ export const Home: React.FC<HomeProps> = ({
                 Sinagoga & As Grandes Festas
               </h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Tefilot diárias com Minyan, Kabalat Shabat cantado, Kidush comunitário e celebrações completas de Pessach, Rosh Hashaná e Yom Kipur.
+                Tefilot diárias com Minyan, Kabalat Shabat cantado, Kidush comunitário e celebrações completas de Sucot, Pessach, Rosh Hashaná e Simchat Torá.
               </p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-100 flex items-center text-xs font-bold text-chabad">

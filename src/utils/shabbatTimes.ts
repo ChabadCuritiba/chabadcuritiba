@@ -37,15 +37,19 @@ function formatHolidayTitlePt(title: string): string {
   if (!title) return '';
   return title
     .replace(/^Parashat\s+/i, '')
+    .replace(/Erev Sukkot/i, 'Sucot (Sukkos)')
+    .replace(/Sukkot I{1,2}/i, 'Sucot (Sukkos)')
+    .replace(/Sukkot/i, 'Sucot (Sukkos)')
+    .replace(/Erev Yom Kippur/i, 'Iom Kipur')
     .replace(/Yom Kippur/i, 'Iom Kipur')
-    .replace(/Erev Rosh Hashana/i, 'Erev Rosh Hashaná')
+    .replace(/Erev Rosh Hashana/i, 'Rosh Hashaná')
+    .replace(/Rosh Hashana I{1,2}/i, 'Rosh Hashaná')
     .replace(/Rosh Hashana/i, 'Rosh Hashaná')
-    .replace(/Erev Sukkot/i, 'Erev Sucot')
-    .replace(/Sukkot/i, 'Sucot')
-    .replace(/Shemini Atzeret/i, 'Shemini Atseret')
+    .replace(/Shemini Atzeret/i, 'Shemini Atseret & Simchat Torá')
     .replace(/Simchat Torah/i, 'Simchat Torá')
     .replace(/Chanukah|Hanukkah/i, 'Chanucá')
     .replace(/Purim/i, 'Purim')
+    .replace(/Pesach I{1,2}|Passover I{1,2}/i, 'Pêssach')
     .replace(/Pesach|Passover/i, 'Pêssach')
     .replace(/Shavuot/i, 'Shavuot');
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, Clock, Sparkles, Volume2, VolumeX, BookOpen, ChevronRight, Check } from 'lucide-react';
+import { Flame, Clock, Sparkles, BookOpen, ChevronRight, Check } from 'lucide-react';
 import { getCuritibaShabbatTimes, fetchLiveCuritibaShabbatTimes } from '../utils/shabbatTimes';
 
 interface ShabbatWidgetProps {
@@ -33,8 +33,12 @@ export const ShabbatWidget: React.FC<ShabbatWidgetProps> = ({ onLearnMore }) => 
     };
   }, []);
 
+  const isSucot = times.parashaName.toLowerCase().includes('sucot') || times.parashaName.toLowerCase().includes('sukkot');
+  const isHoliday = isSucot || times.parashaName.toLowerCase().includes('rosh') || times.parashaName.toLowerCase().includes('kipur') || times.parashaName.toLowerCase().includes('pêssach') || times.parashaName.toLowerCase().includes('shavuot') || times.parashaName.toLowerCase().includes('simchat');
+
   const handleCopyTimes = () => {
-    const text = `🕯️ Horários de Shabat em Curitiba (Beit Chabad do Paraná):\n• Parashat: ${times.parashaName}\n• Acendimento das Velas: ${times.candleLighting}\n• Havdalá: ${times.havdalah}\n• Data: ${times.nextShabbatDate}\n\nShabat Shalom! ✨`;
+    const title = isSucot ? '🕯️ Horários de Shabat & Sucot em Curitiba (Beit Chabad do Paraná):' : '🕯️ Horários de Shabat em Curitiba (Beit Chabad do Paraná):';
+    const text = `${title}\n• ${isHoliday ? 'Chag' : 'Parashat'}: ${times.parashaName}\n• Acendimento das Velas: ${times.candleLighting}\n• Havdalá: ${times.havdalah}\n• Data: ${times.nextShabbatDate}\n\nChag Sameach & Shabat Shalom! ✨`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -55,9 +59,9 @@ export const ShabbatWidget: React.FC<ShabbatWidgetProps> = ({ onLearnMore }) => 
             </div>
             <div>
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-wide flex items-center gap-2">
-                <span>Shabat em Curitiba</span>
-                <span className="text-xs font-sans font-medium px-2 py-0.5 rounded-full bg-chabad-gold/20 text-chabad-gold border border-chabad-gold/30">
-                  Ao Vivo
+                <span>{isSucot ? 'Shabat & Sucot em Curitiba' : isHoliday ? `${times.parashaName} em Curitiba` : 'Shabat em Curitiba'}</span>
+                <span className="text-xs font-sans font-medium px-2.5 py-0.5 rounded-full bg-chabad-gold/20 text-chabad-gold border border-chabad-gold/30">
+                  {isSucot ? 'Chag Sucot 🌿' : 'Ao Vivo'}
                 </span>
               </h3>
               <p className="text-xs text-emerald-200/90">{times.hebrewDate}</p>
@@ -100,19 +104,19 @@ export const ShabbatWidget: React.FC<ShabbatWidgetProps> = ({ onLearnMore }) => 
                 {times.havdalah}
               </div>
               <div className="text-xs text-slate-300">
-                Sábado à noite (saída das estrelas / 45m)
+                {isSucot ? 'Término de Yom Tov (45 min)' : 'Sábado à noite (saída das estrelas / 45m)'}
               </div>
             </div>
             <div className="text-[11px] text-amber-200/90 mt-2 pt-2 border-t border-white/10 leading-snug">
-              * Se coincidir com Yom Tov, a Havdalá é feita somente após o término do Yom Tov.
+              {isSucot ? '* No sábado à noite, acendem-se as velas de Sucot II a partir de chama pré-existente após o anoitecer.' : '* Se coincidir com Yom Tov, a Havdalá é feita somente após o término do Yom Tov.'}
             </div>
           </div>
 
-          {/* Parashat Hashavua */}
+          {/* Parashat Hashavua / Chag */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 hover:border-chabad-gold/40 transition-all flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between text-xs text-chabad-goldLight mb-1.5">
-                <span className="font-medium uppercase tracking-wider">Parashat HaShavua</span>
+                <span className="font-medium uppercase tracking-wider">{isHoliday ? 'Festa Judaica (Chag)' : 'Parashat HaShavua'}</span>
                 <BookOpen className="w-4 h-4 text-chabad-gold" />
               </div>
               <div className="font-serif text-2xl sm:text-3xl font-bold text-chabad-gold mb-1">
@@ -149,35 +153,60 @@ export const ShabbatWidget: React.FC<ShabbatWidgetProps> = ({ onLearnMore }) => 
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowBlessing(!showBlessing)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-chabad-gold hover:bg-yellow-500 text-chabad-dark transition-all shadow-md flex items-center space-x-1.5"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-chabad-gold hover:bg-yellow-500 text-chabad-dark transition-all shadow-md flex items-center space-x-1.5 cursor-pointer"
             >
               <Flame className="w-3.5 h-3.5" />
-              <span>{showBlessing ? 'Ocultar Bênção' : 'Ver Bênção das Velas'}</span>
+              <span>{showBlessing ? 'Ocultar Bênção' : isHoliday ? 'Ver Bênção das Velas do Chag' : 'Ver Bênção das Velas'}</span>
             </button>
           </div>
         </div>
 
         {/* Collapsible Blessing Section */}
         {showBlessing && (
-          <div className="mt-5 p-5 bg-chabad-dark/80 rounded-2xl border border-chabad-gold/40 animate-in fade-in slide-in-from-top-3 duration-200 text-center">
-            <div className="text-chabad-gold font-bold text-xs uppercase tracking-widest mb-2">
-              Bênção para o Acendimento das Velas de Shabat
-            </div>
-            
-            {/* Hebrew */}
-            <div className="font-serif text-xl sm:text-2xl text-amber-200 my-3 leading-relaxed" dir="rtl">
-              בָּרוּךְ אַתָּה ה' אֱ-לֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ לְהַדְלִיק נֵר שֶׁל שַׁבָּת קֹדֶשׁ.
+          <div className="mt-5 p-5 bg-chabad-dark/80 rounded-2xl border border-chabad-gold/40 animate-in fade-in slide-in-from-top-3 duration-200 text-center space-y-4">
+            <div>
+              <div className="text-chabad-gold font-bold text-xs uppercase tracking-widest mb-1">
+                {isSucot ? '1. Bênção das Velas de Shabat & Sucot' : 'Bênção para o Acendimento das Velas'}
+              </div>
+              
+              {/* Hebrew */}
+              <div className="font-serif text-xl sm:text-2xl text-amber-200 my-2 leading-relaxed" dir="rtl">
+                {isSucot
+                  ? 'בָּרוּךְ אַתָּה ה\' אֱ-לֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ לְהַדְלִיק נֵר שֶׁל שַׁבָּת וְשֶׁל יוֹם טוֹב.'
+                  : 'בָּרוּךְ אַתָּה ה\' אֱ-לֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ לְהַדְלִיק נֵר שֶׁל שַׁבָּת קֹדֶשׁ.'}
+              </div>
+
+              {/* Transliteration */}
+              <div className="text-xs sm:text-sm font-medium text-slate-200 italic mb-1">
+                {isSucot
+                  ? '"Baruch Atá Ado-nai Elo-hênu Melech Haolam, Asher Kideshánu Bemitsvotav Vetsivánu Lehadlik Ner Shel Shabat VeShel Yom Tov."'
+                  : '"Baruch Atá Ado-nai Elo-hênu Melech Haolam, Asher Kideshánu Bemitsvotav Vetsivánu Lehadlik Ner Shel Shabat Kodesh."'}
+              </div>
+
+              {/* Portuguese */}
+              <div className="text-xs text-slate-300 max-w-xl mx-auto">
+                {isSucot
+                  ? '"Bendito és Tu, Senhor nosso D-us, Rei do Universo, que nos santificou com Seus mandamentos e nos ordenou acender a vela do Shabat e do Yom Tov."'
+                  : '"Bendito és Tu, Senhor nosso D-us, Rei do Universo, que nos santificou com Seus mandamentos e nos ordenou acender a vela do sagrado Shabat."'}
+              </div>
             </div>
 
-            {/* Transliteration */}
-            <div className="text-sm font-medium text-slate-200 italic mb-2">
-              "Baruch Atá Ado-nai Elo-hênu Melech Haolam, Asher Kideshánu Bemitsvotav Vetsivánu Lehadlik Ner Shel Shabat Kodesh."
-            </div>
-
-            {/* Portuguese */}
-            <div className="text-xs text-slate-300 max-w-xl mx-auto">
-              "Bendito és Tu, Senhor nosso D-us, Rei do Universo, que nos santificou com Seus mandamentos e nos ordenou acender a vela do sagrado Shabat."
-            </div>
+            {isHoliday && (
+              <div className="pt-3 border-t border-white/10">
+                <div className="text-chabad-gold font-bold text-xs uppercase tracking-widest mb-1">
+                  2. Bênção de Shehecheyánu (Para o Chag)
+                </div>
+                <div className="font-serif text-lg sm:text-xl text-amber-200 my-2 leading-relaxed" dir="rtl">
+                  בָּרוּךְ אַתָּה ה' אֱ-לֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁהֶחֱיָנוּ וְקִיְּמָנוּ וְהִגִּיעָנוּ לִזְּמַן הַזֶּה.
+                </div>
+                <div className="text-xs sm:text-sm font-medium text-slate-200 italic mb-1">
+                  "Baruch Atá Ado-nai Elo-hênu Melech Haolam, Shehecheyánu Vekiyemánu Vehiguiánu Lizman Hazê."
+                </div>
+                <div className="text-xs text-slate-300 max-w-xl mx-auto">
+                  "Bendito és Tu, Senhor nosso D-us, Rei do Universo, que nos concedeu a vida, nos sustentou e nos fez chegar a esta época festiva."
+                </div>
+              </div>
+            )}
           </div>
         )}
 
