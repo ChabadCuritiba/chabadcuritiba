@@ -65,7 +65,7 @@ export const Mikve: React.FC = () => {
             </p>
 
             <p>
-              Construído de acordo com os mais rigorosos parâmetros da lei judaica (Halachá) e com supervisão rabínica especializada, o <strong>Mikvê</strong> em Curitiba foi projetado para oferecer o máximo conforto e tranquilidade.
+              Construído de acordo com os mais rigorosos parâmetros da lei judaica (Halachá), o <strong>Mikvê</strong> em Curitiba foi projetado para oferecer o máximo conforto e tranquilidade.
             </p>
 
             <div className="space-y-3 pt-2">
